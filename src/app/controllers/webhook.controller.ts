@@ -4,6 +4,8 @@ import { prisma } from "../../lib/prisma";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 
 const stripeWebhook = catchAsyncHandler(async (req: Request, res: Response) => {
+  // Stripe requires the raw body to verify the signature, so we need to access it directly
+  console.log("Received Stripe webhook with headers:", req.headers, "and body:", req.body);
   const sig = req.headers["stripe-signature"];
 
   let event;

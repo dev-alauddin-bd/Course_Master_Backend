@@ -28,7 +28,7 @@ const getAllCourses = catchAsyncHandler(async (req: Request, res: Response) => {
     category: category?.toString(),
     sort: sort?.toString(),
   });
-  console.log("Fetched courses with query:", req.query, "Result count:", courses);
+  // console.log("Fetched courses with query:", req.query, "Result count:", courses);
 
   sendResponse(res, 200, "Courses fetched successfully", courses);
 });

@@ -5,6 +5,7 @@ import { enrollService } from "../services/enroll.service";
 import { enrollValidation } from "../validations/enroll.validation";
 
 const enrollCourse = catchAsyncHandler(async (req: Request, res: Response) => {
+  console.log("Received enrollment request with data:", req.body);
   // Validate request
   const validated = enrollValidation.parse(req.body);
 
