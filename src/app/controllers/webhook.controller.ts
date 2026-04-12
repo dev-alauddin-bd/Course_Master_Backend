@@ -25,9 +25,9 @@ export const stripeWebhook = async (req: Request, res: Response) => {
   console.log("🔥 WEBHOOK EVENT:", event.type);
 
   // =========================
-  // CHECKOUT SUCCESS
+  // PAYMENT INTENT SUCCESS
   // =========================
-  if (event.type === "checkout.session.completed") {
+  if (event.type === "payment_intent.succeeded") {
     const session = event.data.object as any;
 
     console.log("📦 SESSION METADATA:", session.metadata);
