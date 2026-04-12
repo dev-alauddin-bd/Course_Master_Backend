@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  
 }
 
 // ---------------- ENUMS ----------------
@@ -14,61 +13,38 @@ enum Role {
   admin
 }
 
-
-enum SubmissionType {
-  text
-  link
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
 }
 
 // ---------------- USER ----------------
 model User {
-  id               String            @id @default(uuid())
-  name             String
-  email            String            @unique
-  bio              String?
-  password         String
-  role             Role              @default(student)
-  avatar           String?
-
-  enrolledCourses  Enrollment[]      // ✅ relation via Enrollment
-  instructorCourses Course[]         @relation("InstructorCourses")
-  completedLessons CompletedLesson[]
-  balance          Float             @default(0)
-  reviews          Review[]
-  payments         Payment[]
+  id                    String                 @id @default(uuid())
+  name                  String
+  email                 String                 @unique
+  password              String
+  role                  Role                   @default(student)
+  avatar                String?
+  enrolledCourses       Enrollment[]
+  createdCourses        Course[]               @relation("InstructorCourses")
+  reviews               Review[]
+  payments              Payment[]
   assignmentSubmissions AssignmentSubmission[]
-  quizSubmissions       QuizSubmission[]
-
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  completedLessons      CompletedLesson[]
 
   @@map("users")
-}
-
-// ---------------- REVIEW ----------------
-model Review {
-  id        String   @id @default(uuid())
-  content   String
-  rating    Int      @default(5)
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-
-  isPublished Boolean @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("reviews")
 }
 
 // ---------------- CATEGORY ----------------
 model Category {
   id        String   @id @default(uuid())
   name      String   @unique
-
   courses   Course[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -77,45 +53,69 @@ model Category {
 
 // ---------------- COURSE ----------------
 model Course {
-  id           String       @id @default(uuid())
+  id           String  @id @default(uuid())
   title        String
   description  String?
   thumbnail    String
   previewVideo String
-  price        Float        @default(0)
+  price        Float   @default(0)
   instructorId String
-  instructor   User         @relation("InstructorCourses", fields: [instructorId], references: [id])
-  isPublished  Boolean      @default(false)
+  isPublished  Boolean @default(false)
+  instructor   User    @relation("InstructorCourses", fields: [instructorId], references: [id])
 
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
 
-  category     Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId   String
+  modules Module[]
 
-  modules      Module[]
-
-  // 🔥 IMPORTANT FIX
-  enrolledUsers Enrollment[]  
+  //IMPORTANT FIX
+  enrolledUsers Enrollment[]
   payments      Payment[]
 
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviews   Review[]
+  isDeleted Boolean  @default(false)
 
+  @@index([categoryId])
+  @@index([instructorId])
   @@map("courses")
 }
 
 // ---------------- MODULE ----------------
 model Module {
-  id        String   @id @default(uuid())
-  title     String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId  String
-
-  lessons   Lesson[]
-  assignment       Assignment?
-  quiz             Quiz?
-  order            Int      @default(0)
+  id          String       @id @default(uuid())
+  title       String
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId    String
+  lessons     Lesson[]
+  assignments Assignment[]
+  order       Int          @default(0)
+  isDeleted   Boolean      @default(false)
 
   @@map("modules")
+}
+
+// ---------------- REVIEW ----------------
+model Review {
+  id      String @id @default(uuid())
+  content String
+  rating  Int    @default(5)
+
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  isPublished Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([rating])
+  @@index([courseId])
+  @@index([userId])
+  @@map("reviews")
 }
 
 // ---------------- LESSON ----------------
@@ -124,142 +124,108 @@ model Lesson {
   title            String
   videoUrl         String
   duration         Float             @default(0)
-
   module           Module            @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   moduleId         String
-
   order            Int               @default(0)
-
   completedByUsers CompletedLesson[]
+  isDeleted        Boolean           @default(false)
 
+  @@index([moduleId])
   @@map("lessons")
 }
 
 // ---------------- ASSIGNMENT ----------------
 model Assignment {
-  id             String         @id @default(uuid())
-  description    String
-  submissionType SubmissionType @default(text)
+  id          String                 @id @default(uuid())
+  description String
+  moduleId    String
+  module      Module                 @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  submissions AssignmentSubmission[]
+  deadline    DateTime?
+  isDeleted   Boolean                @default(false)
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
 
-  module         Module         @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  moduleId       String         @unique
-
-  submissions    AssignmentSubmission[]
-
+  @@index([moduleId])
   @@map("assignments")
-}
-
-// ---------------- QUIZ ----------------
-model Quiz {
-  id        String         @id @default(uuid())
-
-  module    Module         @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  moduleId  String         @unique
-
-  questions QuizQuestion[]
-  submissions QuizSubmission[]
-
-  @@map("quizzes")
-}
-
-// ---------------- QUIZ QUESTION ----------------
-model QuizQuestion {
-  id            String   @id @default(uuid())
-  question      String
-  options       String[]
-  correctAnswer Int      @default(0)
-
-  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  quizId        String
-
-  @@map("quiz_questions")
 }
 
 // ---------------- ENROLLMENT (🔥 MAIN FIX) ----------------
 model Enrollment {
-  id           String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 
-  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId     String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String
 
   enrolledAt   DateTime @default(now())
   lastActivity DateTime @updatedAt
 
   @@unique([userId, courseId]) // prevent duplicate enroll
+  @@index([userId])
+  @@index([courseId])
   @@map("enrollments")
 }
 
 // ---------------- COMPLETED LESSON ----------------
 model CompletedLesson {
-  id          String   @id @default(uuid())
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
-
-  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  lessonId    String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId String
 
   completedAt DateTime @default(now())
 
   @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
   @@map("completed_lessons")
 }
 
 // ---------------- PAYMENT ----------------
 model Payment {
-  id              String   @id @default(uuid())
+  id              String        @id @default(uuid())
   amount          Float
-  currency        String   @default("usd")
-  status          String   @default("pending") // pending, completed, failed, refunded
-  stripeSessionId String?  @unique
-  stripePaymentId String?  @unique
-  
-  user            User     @relation(fields: [userId], references: [id])
-  userId          String
-  course          Course   @relation(fields: [courseId], references: [id])
-  courseId        String
+  currency        String        @default("usd")
+  status          PaymentStatus @default(PENDING)
+  stripeSessionId String?       @unique
+  stripePaymentId String?       @unique
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([userId])
+  @@index([courseId])
   @@map("payments")
 }
 
 // ---------------- ASSIGNMENT SUBMISSION ----------------
 model AssignmentSubmission {
-  id           String      @id @default(uuid())
-  content      String      // The text or link submitted
-  status       String      @default("submitted") // submitted, graded
-  score        Float?
+  id      String @id @default(uuid())
+  content String // The text or link submitted
+  status  String @default("submitted") // submitted, graded
+  score   Float?
 
-  assignment   Assignment  @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
   assignmentId String
 
-  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 
-  submittedAt  DateTime    @default(now())
+  submittedAt DateTime @default(now())
 
   @@unique([userId, assignmentId])
+  @@index([userId])
+  @@index([assignmentId])
   @@map("assignment_submissions")
-}
-
-// ---------------- QUIZ ATTEMPT / SUBMISSION ----------------
-model QuizSubmission {
-  id           String      @id @default(uuid())
-  score        Float
-  total        Int
-
-  quiz         Quiz        @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  quizId       String
-
-  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String
-
-  submittedAt  DateTime    @default(now())
-
-  @@map("quiz_submissions")
 }

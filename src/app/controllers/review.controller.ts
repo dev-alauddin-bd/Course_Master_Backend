@@ -4,12 +4,13 @@ import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 
 const createReview = catchAsyncHandler(async (req, res) => {
   const userId = (req as any).user.id;
-  const { content, rating } = req.body;
+  const { content, rating, courseId } = req.body;
 
   const result = await reviewService.createReview({
     content,
     rating,
     userId,
+    courseId,
   });
 
   res.status(201).json({

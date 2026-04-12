@@ -23,61 +23,8 @@ const enrollCourse = async (userId: string, courseId: string) => {
   }
 
   if (course.price > 0) {
-    console.log("💰 Paid course detected");
-
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-
-    console.log("👤 USER:", user?.email);
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-
-      success_url: `${process.env.FRONTEND_URL}/dashboard/student/my-courses?success=true`,
-      cancel_url: `${process.env.FRONTEND_URL}/courses/${course.id}?canceled=true`,
-
-      customer_email: user?.email,
-      client_reference_id: userId,
-
-      metadata: {
-        userId,
-        courseId,
-      },
-
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: course.title,
-            },
-            unit_amount: Math.round(course.price * 100),
-          },
-          quantity: 1,
-        },
-      ],
-    });
-
-    console.log("🎟️ STRIPE SESSION CREATED:", session.id);
-    console.log("🔗 PAYMENT URL:", session.url);
-
-    await prisma.payment.create({
-      data: {
-        amount: course.price,
-        currency: "usd",
-        status: "pending",
-        stripeSessionId: session.id,
-        userId,
-        courseId,
-      },
-    });
-
-    console.log("💾 PAYMENT SAVED (pending)");
-
-    return { paymentUrl: session.url };
+    throw new CustomAppError(400, "This is a paid course. Please proceed to payment checkout.");
   }
-
-  console.log("🆓 Free course → direct enrollment");
 
   const enrollment = await prisma.enrollment.upsert({
     where: { userId_courseId: { userId, courseId } },
@@ -116,10 +63,7 @@ const getEnrolledCourseContent = async (userId: string, courseId: string) => {
       category: true,
       modules: {
         include: {
-          assignment: true,
-          quiz: {
-            include: { questions: true }
-          },
+          assignments: true,
           lessons: {
             include: {
               completedByUsers: {
@@ -180,8 +124,7 @@ const getEnrolledCourseContent = async (userId: string, courseId: string) => {
       lessonCount,
       completedCount,
       progressPercentage: lessonCount > 0 ? Math.round((completedCount / lessonCount) * 100) : 0,
-      assignment: mod.assignment,
-      quiz: mod.quiz,
+      assignments: mod.assignments,
       lessons: processedLessons
     };
   });

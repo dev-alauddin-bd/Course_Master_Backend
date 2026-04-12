@@ -34,6 +34,13 @@ export const userService = {
       where: { id: userId },
       data: { role: 'instructor' }
     });
+  },
+
+  async updateProfile(userId: string, data: { name?: string; avatar?: string }) {
+    return await prisma.user.update({
+      where: { id: userId },
+      data,
+    });
   }
 };
 

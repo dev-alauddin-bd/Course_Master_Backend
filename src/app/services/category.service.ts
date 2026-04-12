@@ -27,6 +27,10 @@ const getAllCategories = async () => {
  * @returns The newly created category record
  */
 const createCategory = async (payload: ICategory) => {
+  if (!payload.name) {
+    throw new CustomAppError(400, "Category name is required.");
+  }
+
   // Check if category name is already in use
   const existing = await prisma.category.findUnique({
     where: { name: payload.name },

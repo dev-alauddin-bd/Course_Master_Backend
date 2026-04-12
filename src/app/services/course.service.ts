@@ -145,13 +145,12 @@ const getCourseById = async (id: string, userId?: string) => {
     include: {
       category: true,
       instructor: {
-        select: { name: true, avatar: true, bio: true }
+        select: { name: true, avatar: true }
       },
       modules: {
         include: {
           // ✅ assignment and quiz are now on the module level
-          assignment: true,
-          quiz: { include: { questions: true } },
+          assignments: true,
           lessons: {
             orderBy: { order: 'asc' }
           }

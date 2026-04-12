@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma";
 
-const createReview = async (payload: { content: string; rating: number; userId: string }) => {
+const createReview = async (payload: { content: string; rating: number; userId: string; courseId: string }) => {
   return await prisma.review.create({
     data: payload,
     include: {

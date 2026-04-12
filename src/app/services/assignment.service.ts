@@ -1,6 +1,5 @@
 import { prisma } from "../../lib/prisma";
 import { CustomAppError } from "../errors/customError";
-import { SubmissionType } from "../interfaces/assignment.interface";
 
 /**
  * Create or update assignment
@@ -8,9 +7,8 @@ import { SubmissionType } from "../interfaces/assignment.interface";
 const createAssignment = async (payload: {
   moduleId: string;
   description: string;
-  submissionType: SubmissionType | string;
 }) => {
-  const { moduleId, description, submissionType } = payload;
+  const { moduleId, description } = payload;
 
   const module = await prisma.module.findUnique({
     where: { id: moduleId },
@@ -20,17 +18,18 @@ const createAssignment = async (payload: {
     throw new CustomAppError(404, "Module not found");
   }
 
-  const assignment = await prisma.assignment.upsert({
-    where: { moduleId },
-    update: {
-      description,
-      submissionType: submissionType as SubmissionType,
-    },
-    create: {
+  const existingAssignment = await prisma.assignment.findFirst({
+    where: { moduleId }
+  });
+
+  if (existingAssignment) {
+    throw new CustomAppError(400, "This module already contains an assignment. Please edit the existing one.");
+  }
+
+  const assignment = await prisma.assignment.create({
+    data: {
       moduleId,
       description,
-      submissionType:
-        (submissionType as SubmissionType) || SubmissionType.text,
     },
   });
 
@@ -69,16 +68,12 @@ const updateAssignment = async (
   id: string,
   payload: Partial<{
     description: string;
-    submissionType: SubmissionType | string;
   }>
 ) => {
   return await prisma.assignment.update({
     where: { id },
     data: {
       ...(payload.description && { description: payload.description }),
-      ...(payload.submissionType && {
-        submissionType: payload.submissionType as SubmissionType,
-      }),
     },
   });
 };

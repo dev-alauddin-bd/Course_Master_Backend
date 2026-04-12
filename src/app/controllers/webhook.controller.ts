@@ -64,7 +64,7 @@ export const stripeWebhook = async (req: Request, res: Response) => {
         await tx.payment.update({
           where: { stripeSessionId: session.id },
           data: {
-            status: "completed",
+            status: "COMPLETED",
             stripePaymentId: session.payment_intent,
           },
         });

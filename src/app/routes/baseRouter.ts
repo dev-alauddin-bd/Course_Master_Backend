@@ -7,11 +7,10 @@ import { courseRouter } from "./course.route";
 import { categoryRouter } from "./category.route";
 import { moduleRouter } from "./module.routes";
 import { assignmentRouter } from "./assignment.routes";
-import { quizRouter } from "./quiz.routes";
 import { dashboardRouter } from "./dashboard.route";
 import { userRouter } from "./user.route";
 import { reviewRoutes } from "./review.route";
-
+import { paymentRouter } from "./payment.route";
 import { enrollRouter } from "./enroll.route";
 import { lessonRouter } from "./lesson.route";
 import { studentSubmissionRouter } from "./studentSubmission.route";
@@ -28,11 +27,13 @@ const routes = [
   { path: "/enrollments", handler: enrollRouter }, // Enrollment management
   { path: "/assignments", handler: assignmentRouter }, // Assignment routes: create assignments
   { path: "/reviews", handler: reviewRoutes },     // Testimonials/Reviews
-  { path: "/quizs", handler: quizRouter },         // Quiz routes: create quiz
+
 
   { path: "/dashboard", handler: dashboardRouter },
   { path: "/users", handler: userRouter },
   { path: "/submissions", handler: studentSubmissionRouter },
+  { path: "/payments", handler: paymentRouter },
+
 ];
 
 // Attach each router to its path

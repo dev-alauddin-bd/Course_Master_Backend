@@ -97,18 +97,13 @@ export const dashboardService = {
 
     // ------------ PERSONALIZED STUDENT DASHBOARD ------------
     if (role === UserRole.STUDENT) {
-      const [myEnrolledCount, totalCompletedLessons, pendingAssignments, pendingQuizzes] = await Promise.all([
+      const [myEnrolledCount, totalCompletedLessons, pendingAssignments] = await Promise.all([
         prisma.enrollment.count({ where: { userId } }),
         prisma.completedLesson.count({ where: { userId } }),
         prisma.assignment.count({
           where: { module: { course: { enrolledUsers: { some: { userId } } } } }
-        }),
-        prisma.quiz.count({
-          where: { module: { course: { enrolledUsers: { some: { userId } } } } }
         })
       ]);
-
-      // Roughly calculate course completions (100% progress)
       const myEnrollments = await prisma.enrollment.findMany({
         where: { userId },
         include: { course: { include: { modules: { include: { lessons: { select: { id: true } } } } } } }
@@ -134,7 +129,7 @@ export const dashboardService = {
           enrolledCourses: myEnrolledCount,
           completedCourses: completedCoursesCount,
           lessonsCompleted: totalCompletedLessons,
-          pendingTasks: pendingAssignments + pendingQuizzes
+          pendingTasks: pendingAssignments
         },
         message: "Student activity dashboard snapshot ready"
       };

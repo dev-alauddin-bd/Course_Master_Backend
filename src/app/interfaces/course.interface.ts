@@ -39,25 +39,8 @@ export interface IModule {
 export interface IAssignment {
   id: string;
   description: string;
-  submissionType: SubmissionType;
   lessonId: string;
   lesson?: ILesson;
-}
-
-export interface IQuiz {
-  id: string;
-  lessonId: string;
-  lesson?: ILesson;
-  questions?: IQuizQuestion[];
-}
-
-export interface IQuizQuestion {
-  id: string;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  quizId: string;
-  quiz?: IQuiz;
 }
 
 export interface IEnrollment {
@@ -87,7 +70,6 @@ export interface ILesson {
   moduleId: string;
   module?: IModule;
   assignment?: IAssignment | null;
-  quiz?: IQuiz | null;
   order: number;
   completedByUsers?: ICompletedLesson[];
 }

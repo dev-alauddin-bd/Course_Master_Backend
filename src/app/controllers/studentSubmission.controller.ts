@@ -2,7 +2,6 @@ import { Request, RequestHandler, Response } from "express";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
 import { AssignmentService } from "../services/assignment.service";
-import { quizService } from "../services/quiz.service";
 
 // ==============================
 // SUBMIT ASSIGNMENT (Student)
@@ -15,23 +14,12 @@ const submitAssignment = catchAsyncHandler(async (req: Request, res: Response) =
   sendResponse(res, 201, "Assignment submitted successfully", submission);
 });
 
-// ==============================
-// SUBMIT QUIZ (Student)
-// ==============================
-const submitQuiz = catchAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user!.id;
-  const { quizId, answers } = req.body;
 
-  const result = await quizService.submitQuiz(quizId, userId, answers);
-  sendResponse(res, 201, "Quiz submitted successfully", result);
-});
 
 export const studentSubmissionController: StudentSubmissionController = {
   submitAssignment,
-  submitQuiz,
 };
 
 type StudentSubmissionController = {
   submitAssignment: RequestHandler;
-  submitQuiz: RequestHandler;
 }
