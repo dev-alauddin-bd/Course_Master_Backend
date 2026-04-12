@@ -11,7 +11,7 @@ const app: Application = express();
 // ==============================
 // WEBHOOK ROUTE (IMPORTANT: BEFORE JSON)
 // ==============================
-app.use("/api/webhook", webhookRouter);
+app.use("/webhook", webhookRouter);
 
 // ==============================
 // RATE LIMITER

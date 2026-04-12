@@ -1,12 +1,13 @@
-import { Request, RequestHandler, Response } from "express";
+import { Request, Response } from "express";
 import { stripe } from "../../lib/stripe";
 import { prisma } from "../../lib/prisma";
-import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 
-const stripeWebhook = catchAsyncHandler(async (req: Request, res: Response) => {
-  // Stripe requires the raw body to verify the signature, so we need to access it directly
-  console.log("Received Stripe webhook with headers:", req.headers, "and body:", req.body);
+export const stripeWebhook = async (req: Request, res: Response) => {
   const sig = req.headers["stripe-signature"];
+
+  if (!sig) {
+    return res.status(400).send("Missing stripe signature");
+  }
 
   let event;
 
@@ -17,17 +18,22 @@ const stripeWebhook = catchAsyncHandler(async (req: Request, res: Response) => {
       process.env.STRIPE_WEBHOOK_SECRET as string
     );
   } catch (err: any) {
-    console.error(`Webhook Error: ${err.message}`);
+    console.error("❌ Webhook Error:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // ✅ checkout completed
+  console.log("🔥 WEBHOOK HIT:", event.type);
+
+  // =========================
+  // PAYMENT SUCCESS
+  // =========================
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as any;
-    const { courseId, userId } = session.metadata;
+
+    const { courseId, userId } = session.metadata || {};
 
     try {
-      await prisma.$transaction(async (tx:any) => {
+      await prisma.$transaction(async (tx) => {
         await tx.payment.update({
           where: { stripeSessionId: session.id },
           data: {
@@ -37,19 +43,25 @@ const stripeWebhook = catchAsyncHandler(async (req: Request, res: Response) => {
         });
 
         await tx.enrollment.upsert({
-          where: { userId_courseId: { userId, courseId } },
+          where: {
+            userId_courseId: { userId, courseId },
+          },
           create: { userId, courseId },
           update: {},
         });
       });
+
+      console.log("💰 Payment completed + enrollment done");
     } catch (err) {
-      console.error("Database transaction failed:", err);
-      return res.status(500).send("Database transaction error");
+      console.error("❌ DB transaction failed:", err);
+      return res.status(500).send("DB error");
     }
   }
 
-  // ❌ expired session
-  else if (event.type === "checkout.session.expired") {
+  // =========================
+  // SESSION EXPIRED
+  // =========================
+  if (event.type === "checkout.session.expired") {
     const session = event.data.object as any;
 
     try {
@@ -58,15 +70,21 @@ const stripeWebhook = catchAsyncHandler(async (req: Request, res: Response) => {
           stripeSessionId: session.id,
           status: "pending",
         },
-        data: { status: "failed" },
+        data: {
+          status: "failed",
+        },
       });
+
+      console.log("⚠️ Payment marked failed");
     } catch (err) {
-      console.error("Failed to mark session as failed", err);
+      console.error("❌ Expired session update failed:", err);
     }
   }
 
-  // 💸 refund
-  else if (event.type === "charge.refunded") {
+  // =========================
+  // REFUND
+  // =========================
+  if (event.type === "charge.refunded") {
     const charge = event.data.object as any;
 
     try {
@@ -77,7 +95,7 @@ const stripeWebhook = catchAsyncHandler(async (req: Request, res: Response) => {
       });
 
       if (payment) {
-        await prisma.$transaction(async (tx:any) => {
+        await prisma.$transaction(async (tx) => {
           await tx.payment.update({
             where: { id: payment.id },
             data: { status: "refunded" },
@@ -92,19 +110,13 @@ const stripeWebhook = catchAsyncHandler(async (req: Request, res: Response) => {
             },
           });
         });
+
+        console.log("💸 Refund processed");
       }
     } catch (err) {
-      console.error("Failed to process refund event", err);
+      console.error("❌ Refund failed:", err);
     }
   }
 
-  res.status(200).json({ received: true });
-});
-
-export const webhookController: WebhookController = {
-  stripeWebhook,
+  return res.status(200).json({ received: true });
 };
-
-type WebhookController = {
-  stripeWebhook: RequestHandler;
-}
