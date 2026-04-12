@@ -6,7 +6,7 @@ export const stripeWebhook = async (req: Request, res: Response) => {
   const sig = req.headers["stripe-signature"];
 
   if (!sig) {
-    return res.status(400).send("Missing stripe signature");
+    return res.status(400).send("Missing signature");
   }
 
   let event;
@@ -18,103 +18,58 @@ export const stripeWebhook = async (req: Request, res: Response) => {
       process.env.STRIPE_WEBHOOK_SECRET as string
     );
   } catch (err: any) {
-    console.error("❌ Webhook Error:", err.message);
+    console.error("❌ Webhook error:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  console.log("🔥 WEBHOOK HIT:", event.type);
+  console.log("🔥 WEBHOOK EVENT:", event.type);
 
   // =========================
-  // PAYMENT SUCCESS
+  // CHECKOUT SUCCESS
   // =========================
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as any;
 
-    const { courseId, userId } = session.metadata || {};
+    console.log("📦 SESSION METADATA:", session.metadata);
+
+    const userId = session.metadata?.userId;
+    const courseId = session.metadata?.courseId;
+
+    if (!userId || !courseId) {
+      console.log("❌ Missing metadata, skipping...");
+      return res.status(200).json({ received: true });
+    }
 
     try {
       await prisma.$transaction(async (tx) => {
+        // update payment
         await tx.payment.update({
           where: { stripeSessionId: session.id },
           data: {
             status: "completed",
-            stripePaymentId: session.payment_intent as string,
+            stripePaymentId: session.payment_intent,
           },
         });
 
+        // create enrollment (safe upsert)
         await tx.enrollment.upsert({
           where: {
-            userId_courseId: { userId, courseId },
+            userId_courseId: {
+              userId,
+              courseId,
+            },
           },
-          create: { userId, courseId },
+          create: {
+            userId,
+            courseId,
+          },
           update: {},
         });
       });
 
-      console.log("💰 Payment completed + enrollment done");
+      console.log("✅ Enrollment SUCCESS");
     } catch (err) {
-      console.error("❌ DB transaction failed:", err);
-      return res.status(500).send("DB error");
-    }
-  }
-
-  // =========================
-  // SESSION EXPIRED
-  // =========================
-  if (event.type === "checkout.session.expired") {
-    const session = event.data.object as any;
-
-    try {
-      await prisma.payment.updateMany({
-        where: {
-          stripeSessionId: session.id,
-          status: "pending",
-        },
-        data: {
-          status: "failed",
-        },
-      });
-
-      console.log("⚠️ Payment marked failed");
-    } catch (err) {
-      console.error("❌ Expired session update failed:", err);
-    }
-  }
-
-  // =========================
-  // REFUND
-  // =========================
-  if (event.type === "charge.refunded") {
-    const charge = event.data.object as any;
-
-    try {
-      const payment = await prisma.payment.findFirst({
-        where: {
-          stripePaymentId: charge.payment_intent as string,
-        },
-      });
-
-      if (payment) {
-        await prisma.$transaction(async (tx) => {
-          await tx.payment.update({
-            where: { id: payment.id },
-            data: { status: "refunded" },
-          });
-
-          await tx.enrollment.delete({
-            where: {
-              userId_courseId: {
-                userId: payment.userId,
-                courseId: payment.courseId,
-              },
-            },
-          });
-        });
-
-        console.log("💸 Refund processed");
-      }
-    } catch (err) {
-      console.error("❌ Refund failed:", err);
+      console.error("❌ DB ERROR:", err);
     }
   }
 
