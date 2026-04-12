@@ -95,10 +95,12 @@ const enrollCourse = async (userId: string, courseId: string) => {
  * ===================================
  */
 const getMyEnrollments = async (userId: string) => {
-  return await prisma.enrollment.findMany({
+  const enrollments = await prisma.enrollment.findMany({
     where: { userId },
     include: { course: true }
   });
+  console.log("🎓 MY ENROLLMENTS:", enrollments);
+  return enrollments;
 };
 
 
