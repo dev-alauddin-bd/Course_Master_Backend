@@ -240,10 +240,17 @@ export const getMyCourses = async (userId: string) => {
     include: {
       course: {
         include: {
+          instructor: {
+            select: { name: true, avatar: true }
+          },
           modules: {
             include: {
               lessons: {
-                select: { id: true },
+                include: {
+                  completedByUsers: {
+                    where: { userId }
+                  }
+                }
               },
             },
           },
@@ -255,26 +262,45 @@ export const getMyCourses = async (userId: string) => {
     },
   });
 
-  // 🔥 FLATTEN DATA (IMPORTANT FIX)
-  const courses = enrollments.map((enrollment) => ({
-    enrollmentId: enrollment.id,
-    enrolledAt: enrollment.enrolledAt,
-    lastActivity: enrollment.lastActivity,
+  // 🔥 FLATTEN DATA AND CALCULATE PROGRESS
+  const courses = enrollments.map((enrollment) => {
+    let totalLessons = 0;
+    let completedLessonsCount = 0;
 
-    // course flatten
-    id: enrollment.course.id,
-    title: enrollment.course.title,
-    description: enrollment.course.description,
-    thumbnail: enrollment.course.thumbnail,
-    price: enrollment.course.price,
-    instructorId: enrollment.course.instructorId,
-    isPublished: enrollment.course.isPublished,
-    categoryId: enrollment.course.categoryId,
+    enrollment.course.modules?.forEach((mod) => {
+      totalLessons += mod.lessons?.length || 0;
+      mod.lessons?.forEach((lesson) => {
+        if (lesson.completedByUsers && lesson.completedByUsers.length > 0) {
+          completedLessonsCount++;
+        }
+      });
+    });
 
-    // progress placeholder (if you have it)
+    const progressPercentage = totalLessons > 0 ? Math.round((completedLessonsCount / totalLessons) * 100) : 0;
 
-    totalModules: enrollment.course.modules?.length || 0,
-  }));
+    return {
+      enrollmentId: enrollment.id,
+      enrolledAt: enrollment.enrolledAt,
+      lastActivity: enrollment.lastActivity,
+
+      // course flatten
+      id: enrollment.course.id,
+      title: enrollment.course.title,
+      description: enrollment.course.description,
+      thumbnail: enrollment.course.thumbnail,
+      price: enrollment.course.price,
+      instructorId: enrollment.course.instructorId,
+      instructor: enrollment.course.instructor,
+      isPublished: enrollment.course.isPublished,
+      categoryId: enrollment.course.categoryId,
+
+      // progress stats needed by frontend
+      totalModules: enrollment.course.modules?.length || 0,
+      totalLessons,
+      completedLessonsCount,
+      progressPercentage,
+    };
+  });
 
   return courses;
 };
