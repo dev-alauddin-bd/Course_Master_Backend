@@ -8,38 +8,46 @@ import { stripe } from "../../lib/stripe";
  * ===================================
  */
 const enrollCourse = async (userId: string, courseId: string) => {
-  // Check if course exists
+  console.log("==================================");
+  console.log("🚀 ENROLL COURSE START");
+  console.log("👤 userId:", userId);
+  console.log("📚 courseId:", courseId);
+
   const course = await prisma.course.findUnique({ where: { id: courseId } });
+
+  console.log("📦 COURSE FOUND:", course ? "YES" : "NO");
+
   if (!course) {
-    throw new CustomAppError(404, "Enrollment failed: Course not found");
+    console.log("❌ Course not found");
+    throw new Error("Course not found");
   }
 
   if (course.price > 0) {
-    const existingEnrollment = await prisma.enrollment.findUnique({
-      where: { userId_courseId: { userId, courseId } }
-    });
-
-    if (existingEnrollment) {
-      throw new CustomAppError(400, "You are already enrolled in this course");
-    }
+    console.log("💰 Paid course detected");
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
 
+    console.log("👤 USER:", user?.email);
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      mode: 'payment',
-      success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/student/my-courses?success=true`,
-      cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/courses/${course.id}?canceled=true`,
+      payment_method_types: ["card"],
+      mode: "payment",
+
+      success_url: `${process.env.FRONTEND_URL}/dashboard/student/my-courses?success=true`,
+      cancel_url: `${process.env.FRONTEND_URL}/courses/${course.id}?canceled=true`,
+
       customer_email: user?.email,
       client_reference_id: userId,
+
       metadata: {
-        courseId: course.id,
-        userId: userId
+        userId,
+        courseId,
       },
+
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: "usd",
             product_data: {
               name: course.title,
             },
@@ -50,29 +58,37 @@ const enrollCourse = async (userId: string, courseId: string) => {
       ],
     });
 
+    console.log("🎟️ STRIPE SESSION CREATED:", session.id);
+    console.log("🔗 PAYMENT URL:", session.url);
+
     await prisma.payment.create({
-       data: {
-          amount: course.price,
-          currency: 'usd',
-          status: 'pending',
-          stripeSessionId: session.id,
-          userId,
-          courseId
-       }
+      data: {
+        amount: course.price,
+        currency: "usd",
+        status: "pending",
+        stripeSessionId: session.id,
+        userId,
+        courseId,
+      },
     });
+
+    console.log("💾 PAYMENT SAVED (pending)");
 
     return { paymentUrl: session.url };
-  } else {
-    // Free course, enroll directly
-    const enrollment = await prisma.enrollment.upsert({
-      where: { userId_courseId: { userId, courseId } },
-      create: { userId, courseId },
-      update: {} // Do nothing if already enrolled
-    });
-    return enrollment;
   }
-};
 
+  console.log("🆓 Free course → direct enrollment");
+
+  const enrollment = await prisma.enrollment.upsert({
+    where: { userId_courseId: { userId, courseId } },
+    create: { userId, courseId },
+    update: {},
+  });
+
+  console.log("🎓 ENROLLED:", enrollment);
+
+  return enrollment;
+};
 
 /**====================================
  * Get Enrollments for a user
@@ -180,4 +196,4 @@ export const enrollService = {
   getMyEnrollments,
   getEnrolledCourseContent,
 };
-
+
