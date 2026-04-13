@@ -1,6 +1,28 @@
 import { prisma } from "../../lib/prisma";
 
 const createReview = async (payload: { content: string; rating: number; userId: string; courseId: string }) => {
+  const { userId, courseId } = payload;
+
+  // 1. Check if user is enrolled
+  const enrollment = await prisma.enrollment.findUnique({
+    where: {
+      userId_courseId: { userId, courseId }
+    }
+  });
+
+  if (!enrollment) {
+    throw new Error("You must be enrolled in this course to leave a review.");
+  }
+
+  // 2. Check if user already reviewed
+  const existingReview = await prisma.review.findFirst({
+    where: { userId, courseId }
+  });
+
+  if (existingReview) {
+    throw new Error("You have already reviewed this course.");
+  }
+
   return await prisma.review.create({
     data: payload,
     include: {
@@ -13,7 +35,7 @@ const createReview = async (payload: { content: string; rating: number; userId: 
 
 const getAllReviews = async () => {
   return await prisma.review.findMany({
-    where: { isPublished: true },
+   
     include: {
       user: {
         select: { name: true, avatar: true, role: true }

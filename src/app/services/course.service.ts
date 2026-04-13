@@ -159,6 +159,15 @@ const getCourseById = async (id: string, userId?: string) => {
       },
       _count: {
         select: { enrolledUsers: true }
+      },
+      reviews: {
+      
+        include: {
+          user: {
+            select: { name: true, avatar: true }
+          }
+        },
+        orderBy: { createdAt: "desc" }
       }
     }
   });
