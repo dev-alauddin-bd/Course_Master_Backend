@@ -1,14 +1,14 @@
-
 import { Request, RequestHandler, Response } from "express";
 import { courseService } from "../services/course.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
+import logger from "../../lib/logger";
 
 // ==============================
 // CREATE a course
 // ==============================
 const createCourse = catchAsyncHandler(async (req: Request, res: Response) => {
-  console.log("Received course creation request with data:", req.body);
+  logger.info("Received course creation request with data:", req.body);
   const instructorId = req.user!.id;
   const course = await courseService.createCourse({ ...req.body, instructorId });
   sendResponse(res, 201, "Course created successfully", course);
@@ -28,7 +28,7 @@ const getAllCourses = catchAsyncHandler(async (req: Request, res: Response) => {
     category: category?.toString(),
     sort: sort?.toString(),
   });
-  // console.log("Fetched courses with query:", req.query, "Result count:", courses);
+  logger.debug("Fetched courses with query:", { query: req.query, count: Array.isArray(courses) ? courses.length : "N/A" });
 
   sendResponse(res, 200, "Courses fetched successfully", courses);
 });

@@ -3,10 +3,11 @@ import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { lessonService } from "../services/lesson.service";
 import { sendResponse } from "../utils/sendResponse";
 import { createLessonValidation, updateLessonValidation } from "../validations/lesson.validation";
+import logger from "../../lib/logger";
 
 // Add a lesson to a module
 const addLesson = catchAsyncHandler(async (req: Request, res: Response) => {
-  console.log("Received request to add lesson with body:", req.body);
+  logger.info("Received request to add lesson with body:", req.body);
   const validated = createLessonValidation.parse(req.body);
   const lesson = await lessonService.addLesson(validated);
   sendResponse(res, 201, "Lesson added successfully", lesson);

@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { CustomAppError } from "../errors/customError";
+import logger from "../../lib/logger";
 
 /**
  * Fetch all lessons within a specific module or globally
@@ -52,7 +53,7 @@ const addLesson = async (payload: {
   videoUrl: string;
   duration: number;
 }) => {
-  console.log("Adding lesson with payload:", payload);
+  logger.info("Adding lesson with payload:", payload);
   // Ensure the module exists
   const mod = await prisma.module.findUnique({ where: { id: payload.moduleId } });
   if (!mod) throw new CustomAppError(404, "Parent module not found for lesson attachment");

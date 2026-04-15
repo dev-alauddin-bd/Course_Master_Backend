@@ -1,16 +1,16 @@
 import { Request, Response } from "express";
 import { stripe } from "../../lib/stripe";
 import { prisma } from "../../lib/prisma";
+import logger from "../../lib/logger";
 
 export const stripeWebhook = async (req: Request, res: Response) => {
-  console.log("==================================");
-  console.log("🔥 WEBHOOK HIT");
+  logger.info("🔥 WEBHOOK HIT");
 
   const sig = req.headers["stripe-signature"];
-  console.log("🔐 Signature exists:", !!sig);
+  logger.debug("🔐 Signature exists:", !!sig);
 
   if (!sig) {
-    console.log("❌ Missing Stripe signature");
+    logger.warn("❌ Missing Stripe signature");
     return res.status(400).send("Missing signature");
   }
 
@@ -23,43 +23,42 @@ export const stripeWebhook = async (req: Request, res: Response) => {
       process.env.STRIPE_WEBHOOK_SECRET as string
     );
 
-    console.log("✅ Event constructed successfully");
+    logger.info("✅ Event constructed successfully");
   } catch (err: any) {
-    console.log("❌ Webhook signature verification failed");
-    console.error(err.message);
+    logger.error("❌ Webhook signature verification failed", { error: err.message });
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  console.log("🎯 EVENT TYPE:", event.type);
-  console.log("📦 FULL EVENT DATA:", JSON.stringify(event.data.object, null, 2));
+  logger.info("🎯 EVENT TYPE:", event.type);
+  logger.debug("📦 FULL EVENT DATA:", JSON.stringify(event.data.object, null, 2));
 
   // ================================
   // ONLY CHECKOUT SESSION EVENT
   // ================================
   if (event.type === "checkout.session.completed") {
-    console.log("🚀 Processing checkout.session.completed");
+    logger.info("🚀 Processing checkout.session.completed");
 
     const session = event.data.object as any;
 
-    console.log("🧾 SESSION ID:", session.id);
-    console.log("📨 METADATA:", session.metadata);
+    logger.info("🧾 SESSION ID:", session.id);
+    logger.debug("📨 METADATA:", session.metadata);
 
     const userId = session.metadata?.userId;
     const courseId = session.metadata?.courseId;
 
-    console.log("👤 userId:", userId);
-    console.log("📚 courseId:", courseId);
+    logger.info("👤 userId:", userId);
+    logger.info("📚 courseId:", courseId);
 
     if (!userId || !courseId) {
-      console.log("❌ Missing metadata → STOP");
+      logger.warn("❌ Missing metadata → STOP");
       return res.status(200).json({ received: true });
     }
 
     try {
-      console.log("💾 Starting DB transaction...");
+      logger.info("💾 Starting DB transaction...");
 
       await prisma.$transaction(async (tx) => {
-        console.log("✏️ Updating payment...");
+        logger.info("✏️ Updating payment...");
 
         await tx.payment.update({
           where: { stripeSessionId: session.id },
@@ -69,9 +68,9 @@ export const stripeWebhook = async (req: Request, res: Response) => {
           },
         });
 
-        console.log("✅ Payment updated");
+        logger.info("✅ Payment updated");
 
-        console.log("🎓 Creating enrollment...");
+        logger.info("🎓 Creating enrollment...");
 
         await tx.enrollment.upsert({
           where: {
@@ -81,15 +80,15 @@ export const stripeWebhook = async (req: Request, res: Response) => {
           update: {},
         });
 
-        console.log("✅ Enrollment done");
+        logger.info("✅ Enrollment done");
       });
 
-      console.log("🎉 TRANSACTION SUCCESS");
+      logger.info("🎉 TRANSACTION SUCCESS");
     } catch (err) {
-      console.error("❌ DB ERROR:", err);
+      logger.error("❌ DB ERROR:", err);
     }
   }
 
-  console.log("🏁 WEBHOOK END");
+  logger.info("🏁 WEBHOOK END");
   return res.status(200).json({ received: true });
 };

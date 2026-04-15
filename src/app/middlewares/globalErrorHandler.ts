@@ -3,6 +3,7 @@ import { CustomAppError } from "../errors/customError";
 import { ZodError } from "zod";
 import { prisma } from "../../lib/prisma";
 import { Prisma } from "@prisma/client";
+import logger from "../../lib/logger";
 
 const globalErrorHandler = (
   err: any,
@@ -18,7 +19,7 @@ const globalErrorHandler = (
       message: err.message || "Internal Server Error",
     },
   ];
-console.log("Global error handler caught an error:", err);
+  logger.error("Global error handler caught an error:", err);
   // ========================
   // 1. Custom Application Error
   // ========================

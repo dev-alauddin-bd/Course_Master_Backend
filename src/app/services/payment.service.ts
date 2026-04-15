@@ -1,35 +1,33 @@
 import { prisma } from "../../lib/prisma";
 import { stripe } from "../../lib/stripe";
 import { CustomAppError } from "../errors/customError";
+import logger from "../../lib/logger";
 
 /**====================================
  * Create a Stripe Checkout Session
  * ===================================
  */
 const createCheckoutSession = async (userId: string, courseId: string) => {
-  console.log("==================================");
-  console.log("🚀 PAYMENT CHECKOUT START");
-  console.log("👤 userId:", userId);
-  console.log("📚 courseId:", courseId);
+  logger.info("🚀 PAYMENT CHECKOUT START", { userId, courseId });
 
   const course = await prisma.course.findUnique({ where: { id: courseId } });
 
-  console.log("📦 COURSE FOUND:", course ? "YES" : "NO");
+  logger.debug("📦 COURSE FOUND:", course ? "YES" : "NO");
 
   if (!course) {
-    console.log("❌ Course not found");
+    logger.error("❌ Course not found", { courseId });
     throw new CustomAppError(404, "Course not found");
   }
 
   if (course.price === 0) {
-    console.log("🆓 This is a free course");
+    logger.warn("🆓 This is a free course", { courseId });
     throw new CustomAppError(400, "This course is free. Please use standard enrollment.");
   }
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
   
   if (!user) {
-    console.log("❌ User not found");
+    logger.error("❌ User not found", { userId });
     throw new CustomAppError(404, "User not found");
   }
 
@@ -38,7 +36,7 @@ const createCheckoutSession = async (userId: string, courseId: string) => {
   });
 
   if (existingEnrollment) {
-    console.log("⚠️ Already enrolled");
+    logger.warn("⚠️ Already enrolled", { userId, courseId });
     throw new CustomAppError(400, "Already enrolled in this course");
   }
 
@@ -71,8 +69,8 @@ const createCheckoutSession = async (userId: string, courseId: string) => {
     ],
   });
 
-  console.log("🎟️ STRIPE SESSION CREATED:", session.id);
-  console.log("🔗 PAYMENT URL:", session.url);
+  logger.info("🎟️ STRIPE SESSION CREATED:", session.id);
+  logger.debug("🔗 PAYMENT URL:", session.url);
 
   await prisma.payment.create({
     data: {
@@ -85,7 +83,7 @@ const createCheckoutSession = async (userId: string, courseId: string) => {
     },
   });
 
-  console.log("💾 PAYMENT SAVED (pending)");
+  logger.info("💾 PAYMENT SAVED (pending)");
 
   return { paymentUrl: session.url };
 };
@@ -93,3 +91,4 @@ const createCheckoutSession = async (userId: string, courseId: string) => {
 export const paymentService = {
   createCheckoutSession,
 };
+

@@ -39,21 +39,113 @@ const createCourse = async (payload: ICourse) => {
 /**
  * Retrieve a list of courses with filtering, search, and pagination
  */
-const getAllCourses = async (query: any) => {
-  console.log("🚀 Incoming Query:", query);
+// const getAllCourses = async (query: any) => {
+//   console.log("🚀 Incoming Query:", query);
 
+//   const page = Number(query.page) || 1;
+//   const limit = Number(query.limit) || 10;
+//   const skip = (page - 1) * limit;
+
+//   console.log("📄 Pagination:", { page, limit, skip });
+
+//   const where: any = {};
+
+//   // 🔍 SEARCH DEBUG
+//   if (query.search) {
+//     console.log("🔎 Search Term:", query.search);
+
+//     where.OR = [
+//       {
+//         title: {
+//           contains: query.search,
+//           mode: "insensitive",
+//         },
+//       },
+//     ];
+//   }
+
+//   // 🗂 CATEGORY DEBUG
+//   if (query.category) {
+//     console.log("📚 Category Filter:", query.category);
+//     where.categoryId = query.category;
+//   }
+
+//   console.log("🧩 WHERE CLAUSE:", where);
+
+//   // 🔥 SORT DEBUG
+//   let orderBy: any = { createdAt: "desc" };
+
+//   console.log("📊 Default OrderBy:", orderBy);
+
+//   if (query.sort) {
+//     console.log("🎯 Raw Sort Value:", query.sort);
+
+//     if (query.sort === "newest") {
+//       orderBy = { createdAt: "desc" };
+//       console.log("✨ Applied Sort: newest");
+//     } else {
+//       const [field, order] = query.sort.split(":");
+
+//       console.log("🔧 Parsed Sort:", { field, order });
+
+//       const allowedFields = ["price", "createdAt", "title"];
+
+//       if (allowedFields.includes(field)) {
+//         orderBy = {
+//           [field]: order === "desc" ? "desc" : "asc",
+//         };
+
+//         console.log("✅ Final OrderBy:", orderBy);
+//       } else {
+//         console.log("❌ Invalid sort field ignored:", field);
+//       }
+//     }
+//   }
+
+//   console.log("🚀 FINAL ORDERBY:", orderBy);
+
+//   // 🧠 DATABASE CALL DEBUG
+//   const [courses, total] = await Promise.all([
+//     prisma.course.findMany({
+//       where,
+//       orderBy,
+//       skip,
+//       take: limit,
+//       include: {
+//         category: true,
+//         instructor: {
+//           select: { name: true, avatar: true },
+//         },
+//         _count: {
+//           select: { enrolledUsers: true },
+//         },
+//       },
+//     }),
+
+//     prisma.course.count({ where }),
+//   ]);
+
+//   console.log("📦 COURSES FOUND:", courses.length);
+//   console.log("📊 TOTAL COUNT:", total);
+
+//   return {
+//     courses,
+//     total,
+//     page,
+//     totalPages: Math.ceil(total / limit),
+//   };
+// };
+
+
+const getAllCourses = async (query: any) => {
   const page = Number(query.page) || 1;
   const limit = Number(query.limit) || 10;
   const skip = (page - 1) * limit;
 
-  console.log("📄 Pagination:", { page, limit, skip });
-
   const where: any = {};
 
-  // 🔍 SEARCH DEBUG
+  // 🔍 SEARCH (optimized)
   if (query.search) {
-    console.log("🔎 Search Term:", query.search);
-
     where.OR = [
       {
         title: {
@@ -61,32 +153,28 @@ const getAllCourses = async (query: any) => {
           mode: "insensitive",
         },
       },
+      {
+        description: {
+          contains: query.search,
+          mode: "insensitive",
+        },
+      },
     ];
   }
 
-  // 🗂 CATEGORY DEBUG
+  // 🗂 CATEGORY FILTER
   if (query.category) {
-    console.log("📚 Category Filter:", query.category);
     where.categoryId = query.category;
   }
 
-  console.log("🧩 WHERE CLAUSE:", where);
-
-  // 🔥 SORT DEBUG
+  // 📊 SORT
   let orderBy: any = { createdAt: "desc" };
 
-  console.log("📊 Default OrderBy:", orderBy);
-
   if (query.sort) {
-    console.log("🎯 Raw Sort Value:", query.sort);
-
     if (query.sort === "newest") {
       orderBy = { createdAt: "desc" };
-      console.log("✨ Applied Sort: newest");
     } else {
       const [field, order] = query.sort.split(":");
-
-      console.log("🔧 Parsed Sort:", { field, order });
 
       const allowedFields = ["price", "createdAt", "title"];
 
@@ -94,39 +182,50 @@ const getAllCourses = async (query: any) => {
         orderBy = {
           [field]: order === "desc" ? "desc" : "asc",
         };
-
-        console.log("✅ Final OrderBy:", orderBy);
-      } else {
-        console.log("❌ Invalid sort field ignored:", field);
       }
     }
   }
 
-  console.log("🚀 FINAL ORDERBY:", orderBy);
-
-  // 🧠 DATABASE CALL DEBUG
+  // 🚀 DATABASE QUERY (OPTIMIZED)
   const [courses, total] = await Promise.all([
     prisma.course.findMany({
       where,
       orderBy,
       skip,
       take: limit,
-      include: {
-        category: true,
-        instructor: {
-          select: { name: true, avatar: true },
+
+      // 🔥 IMPORTANT CHANGE: use SELECT instead of INCLUDE
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        thumbnail: true,
+        createdAt: true,
+
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
         },
+
+        instructor: {
+          select: {
+            name: true,
+            avatar: true,
+          },
+        },
+
         _count: {
-          select: { enrolledUsers: true },
+          select: {
+            enrolledUsers: true,
+          },
         },
       },
     }),
 
     prisma.course.count({ where }),
   ]);
-
-  console.log("📦 COURSES FOUND:", courses.length);
-  console.log("📊 TOTAL COUNT:", total);
 
   return {
     courses,
@@ -135,7 +234,6 @@ const getAllCourses = async (query: any) => {
     totalPages: Math.ceil(total / limit),
   };
 };
-
 /**
  * Fetch full details of a specific course including its modules and lessons.
  */

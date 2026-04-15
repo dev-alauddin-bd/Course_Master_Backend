@@ -1,4 +1,5 @@
 
+import logger from "../../lib/logger";
 import { CustomAppError } from "../errors/customError";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -13,7 +14,7 @@ import { Role } from "@prisma/client";
  * @returns The created user object without the password
  */
 const signup = async (payload: IUser) => {
-  console.log("Received signup request with data:", payload);
+  logger.info("Received signup request with data:", payload);
   // Check if a user with the same email already exists
   if (!payload.email) {
     throw new CustomAppError(400, "User email is missing in request data");
@@ -30,7 +31,7 @@ const signup = async (payload: IUser) => {
 
   // Hash the password before saving for security
   const hashedPassword = await bcrypt.hash(payload.password!, 12);
-console.log("Password hashed successfully for email:", payload, hashedPassword);
+  logger.info("Password hashed successfully for email:", { email: payload.email });
   // Create new user in PostgreSQL using Prisma
 
 const validRoles = ["student", "instructor", "admin"];
@@ -48,7 +49,7 @@ const role = validRoles.includes(payload.role?.toLowerCase())
   });
 
 
-  console.log("User created successfully with ID:", newUser);
+  logger.info("User created successfully with ID:", newUser.id);
 
   // Remove password from response object for security
   const { password, ...userWithoutPassword } = newUser;

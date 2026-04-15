@@ -1,0 +1,6 @@
+node_modules
+dist
+logs
+.env
+pnpm-lock.yaml
+package-lock.yaml
