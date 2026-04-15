@@ -1,0 +1,3 @@
+2026-04-15 15:31:31 [error]: ReplyError: ERR Only 0th database is supported! Selected DB: 22
+    at parseError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/redis-parser@3.0.0/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/redis-parser@3.0.0/node_modules/redis-parser/lib/parser.js:302:14)

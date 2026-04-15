@@ -1,6 +1,7 @@
 import {  ICourse } from "../interfaces/course.interface";
 import { CustomAppError } from "../errors/customError";
 import { prisma } from "../../lib/prisma";
+import redis from "../../lib/redis";
 
 /**
  * Create a new course entry in the database
@@ -142,6 +143,17 @@ const getAllCourses = async (query: any) => {
   const limit = Number(query.limit) || 10;
   const skip = (page - 1) * limit;
 
+
+  // chek cache first
+
+  const cacheKey= `courses:${page}:${limit}:${query.search}:${query.category}:${query.sort}`;
+
+  const cachedData = await redis.get(cacheKey);
+  if(cachedData){
+    return JSON.parse(cachedData);
+  }
+  
+
   const where: any = {};
 
   // 🔍 SEARCH (optimized)
@@ -226,13 +238,15 @@ const getAllCourses = async (query: any) => {
 
     prisma.course.count({ where }),
   ]);
-
-  return {
+  const result={
     courses,
     total,
     page,
     totalPages: Math.ceil(total / limit),
   };
+  await redis.setex(cacheKey, 300, JSON.stringify(result));
+
+  return result;
 };
 /**
  * Fetch full details of a specific course including its modules and lessons.
@@ -311,6 +325,7 @@ const deleteCourse = async (id: string) => {
   }
 
   await prisma.course.delete({ where: { id } });
+  await redis.del(`courses:${id}`);
   return { message: "Course has been successfully deleted from the server" };
 };
 
