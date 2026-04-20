@@ -15,6 +15,8 @@ import { enrollRouter } from "./enroll.route";
 import { lessonRouter } from "./lesson.route";
 import { studentSubmissionRouter } from "./studentSubmission.route";
 
+import { aiRouter } from "./ai.route";
+
 const router = Router();
 
 // Define all main route paths and their corresponding routers
@@ -27,6 +29,7 @@ const routes = [
   { path: "/enrollments", handler: enrollRouter }, // Enrollment management
   { path: "/assignments", handler: assignmentRouter }, // Assignment routes: create assignments
   { path: "/reviews", handler: reviewRoutes },     // Testimonials/Reviews
+  { path: "/ai", handler: aiRouter },              // AI features: chat, quiz, search, recommendations
 
 
   { path: "/dashboard", handler: dashboardRouter },

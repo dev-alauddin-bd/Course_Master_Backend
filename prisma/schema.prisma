@@ -120,6 +120,7 @@ model Review {
 model Lesson {
   id               String            @id @default(uuid())
   title            String
+  content          String?           @db.Text
   videoUrl         String
   duration         Float             @default(0)
   module           Module            @relation(fields: [moduleId], references: [id], onDelete: Cascade)
