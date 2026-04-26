@@ -81,17 +81,32 @@ const logout = catchAsyncHandler(async (req: Request, res: Response) => {
   sendResponse(res, 200, "Logged out successfully");
 });
 
-export const authControllers:AuthControllers = {
+const syncFirebase = catchAsyncHandler(async (req: Request, res: Response) => {
+  const user = await authServices.syncFirebase(req.body);
+
+  const payload: { id: string; email: string; role: string } = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  };
+  const { accessToken, refreshToken } = generateTokens(payload);
+  setRefreshTokenCookie(res, refreshToken);
+
+  sendResponse(res, 200, "Firebase user synced successfully", { user, accessToken });
+});
+
+export const authControllers: AuthControllers = {
   signup,
   login,
   refreshToken,
   logout,
+  syncFirebase,
 };
-
 
 type AuthControllers = {
   signup: RequestHandler;
   login: RequestHandler;
   refreshToken: RequestHandler;
   logout: RequestHandler;
-}
+  syncFirebase: RequestHandler;
+};

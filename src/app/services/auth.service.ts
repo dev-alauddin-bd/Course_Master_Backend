@@ -120,8 +120,40 @@ const refreshToken = async (token: string) => {
   }
 };
 
+/**
+ * Sync Firebase user with local database
+ */
+const syncFirebase = async (payload: { email: string; name: string; avatar?: string }) => {
+  let user = await prisma.user.findFirst({
+    where: { email: payload.email },
+  });
+
+  if (!user) {
+    // Create user if they don't exist
+    user = await prisma.user.create({
+      data: {
+        name: payload.name,
+        email: payload.email,
+        password: "", // No password needed for social login
+        role: "student",
+        avatar: payload.avatar,
+      },
+    });
+  } else if (payload.avatar && !user.avatar) {
+    // Update avatar if missing
+    user = await prisma.user.update({
+      where: { id: user.id },
+      data: { avatar: payload.avatar },
+    });
+  }
+
+  const { password, ...userWithoutPassword } = user;
+  return userWithoutPassword;
+};
+
 export const authServices = {
   signup,
   login,
   refreshToken,
+  syncFirebase,
 };

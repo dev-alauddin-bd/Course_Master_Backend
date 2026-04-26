@@ -15,6 +15,9 @@ router.post("/signup", authControllers.signup);
 // User login
 router.post("/login", authControllers.login);
 
+// Sync Firebase user
+router.post("/sync-firebase", authControllers.syncFirebase);
+
 // ==============================
 // GET /auth/refresh-token
 // ==============================
