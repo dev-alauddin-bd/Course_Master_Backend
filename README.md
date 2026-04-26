@@ -82,8 +82,8 @@ courseMaster-backend/
 
 ### 1. Clone & Install
 ```bash
-git clone <repo-url>
-cd backend
+git clone https://github.com/dev-alauddin-bd/Course_Master_Backend.git
+cd Course_Master_Backend
 npm install
 ```
 
