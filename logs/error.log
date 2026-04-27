@@ -1,3 +1,525 @@
 2026-04-15 15:31:31 [error]: ReplyError: ERR Only 0th database is supported! Selected DB: 22
     at parseError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/redis-parser@3.0.0/node_modules/redis-parser/lib/parser.js:179:12)
     at parseType (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/redis-parser@3.0.0/node_modules/redis-parser/lib/parser.js:302:14)
+2026-04-27 10:12:09 [error]: Error: read ECONNRESET
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+2026-04-27 10:33:04 [error]: Error: read ECONNRESET
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+2026-04-27 10:34:10 [error]: PrismaClientKnownRequestError: 
+Invalid `prisma.category.findMany()` invocation in
+/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/category.service.ts:15:32
+
+  12  * @returns Array of categories
+  13  */
+  14 const getAllCategories = async () => {
+→ 15   return await prisma.category.findMany(
+getaddrinfo EAI_AGAIN db.prisma.io
+    at Gr.handleRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:237:13)
+    at Gr.handleAndLogRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:183:12)
+    at Gr.request (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:152:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at a (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
+    at Object.getAllCategories (/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/category.service.ts:15:10)
+    at /media/alauddin/Work_Drive1/projects/course/backend/src/app/controllers/category.controller.ts:10:22
+2026-04-27 10:34:38 [error]: PrismaClientKnownRequestError: 
+Invalid `prisma.category.findMany()` invocation in
+/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/category.service.ts:15:32
+
+  12  * @returns Array of categories
+  13  */
+  14 const getAllCategories = async () => {
+→ 15   return await prisma.category.findMany(
+getaddrinfo EAI_AGAIN db.prisma.io
+    at Gr.handleRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:237:13)
+    at Gr.handleAndLogRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:183:12)
+    at Gr.request (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:152:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at a (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
+    at Object.getAllCategories (/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/category.service.ts:15:10)
+    at /media/alauddin/Work_Drive1/projects/course/backend/src/app/controllers/category.controller.ts:10:22
+2026-04-27 10:34:38 [error]: PrismaClientKnownRequestError: 
+Invalid `prisma.review.findMany()` invocation in
+/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/review.service.ts:37:30
+
+  34 };
+  35 
+  36 const getAllReviews = async () => {
+→ 37   return await prisma.review.findMany(
+getaddrinfo EAI_AGAIN db.prisma.io
+    at Gr.handleRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:237:13)
+    at Gr.handleAndLogRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:183:12)
+    at Gr.request (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:152:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at a (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
+    at Object.getAllReviews (/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/review.service.ts:37:10)
+    at /media/alauddin/Work_Drive1/projects/course/backend/src/app/controllers/review.controller.ts:24:18
+2026-04-27 10:49:28 [error]: Error: read EHOSTUNREACH
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+2026-04-27 10:49:28 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:28 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:29 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:29 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:29 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:29 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:30 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:30 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:31 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:31 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:32 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:32 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:33 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:34 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:34 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:35 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:36 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:37 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:38 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:39 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:39 [error]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/ioredis@5.10.1/node_modules/ioredis/built/redis/event_handler.js:207:37)
+    at Object.onceWrapper (node:events:623:26)
+    at TLSSocket.emit (node:events:520:35)
+    at node:net:346:12
+    at TCP.done (node:internal/tls/wrap:671:7)
+2026-04-27 10:49:39 [error]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/ioredis@5.10.1/node_modules/ioredis/built/redis/event_handler.js:207:37)
+    at Object.onceWrapper (node:events:623:26)
+    at TLSSocket.emit (node:events:520:35)
+    at node:net:346:12
+    at TCP.done (node:internal/tls/wrap:671:7)
+2026-04-27 10:49:39 [error]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/ioredis@5.10.1/node_modules/ioredis/built/redis/event_handler.js:207:37)
+    at Object.onceWrapper (node:events:623:26)
+    at TLSSocket.emit (node:events:520:35)
+    at node:net:346:12
+    at TCP.done (node:internal/tls/wrap:671:7)
+2026-04-27 10:49:39 [error]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/ioredis@5.10.1/node_modules/ioredis/built/redis/event_handler.js:207:37)
+    at Object.onceWrapper (node:events:623:26)
+    at TLSSocket.emit (node:events:520:35)
+    at node:net:346:12
+    at TCP.done (node:internal/tls/wrap:671:7)
+2026-04-27 10:49:39 [error]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/ioredis@5.10.1/node_modules/ioredis/built/redis/event_handler.js:207:37)
+    at Object.onceWrapper (node:events:623:26)
+    at TLSSocket.emit (node:events:520:35)
+    at node:net:346:12
+    at TCP.done (node:internal/tls/wrap:671:7)
+2026-04-27 10:49:39 [error]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/ioredis@5.10.1/node_modules/ioredis/built/redis/event_handler.js:207:37)
+    at Object.onceWrapper (node:events:623:26)
+    at TLSSocket.emit (node:events:520:35)
+    at node:net:346:12
+    at TCP.done (node:internal/tls/wrap:671:7)
+2026-04-27 10:49:40 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:41 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:42 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:43 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:45 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:46 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:47 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:49 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:50 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:52 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:53 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:55 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:57 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:49:58 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:00 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:02 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:04 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:06 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:08 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:10 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:12 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:14 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:16 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:18 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:20 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:22 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:24 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:26 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:28 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:30 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:32 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:34 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:36 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:38 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:40 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:42 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:44 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:46 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:48 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:50 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:52 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:54 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:56 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:50:58 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:00 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:02 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:04 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:06 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:08 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:10 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:12 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:14 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:16 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:18 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:20 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:22 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:24 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:26 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:28 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:30 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:32 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:34 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:36 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:38 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:40 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:42 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:44 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:46 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:48 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:50 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:52 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:54 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:56 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:51:58 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:00 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:02 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:04 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:06 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:09 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:11 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:13 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:15 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:17 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:19 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:21 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:23 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:25 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:27 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:29 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:31 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:33 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:35 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:37 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:39 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:41 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:43 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:45 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:47 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:49 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:51 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:53 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:55 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:57 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:52:59 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:01 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:03 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:05 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:07 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:09 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:11 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:13 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:15 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:17 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:19 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:21 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:23 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:25 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:27 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:29 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:31 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:33 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:35 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:37 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:39 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:41 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:43 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:45 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:47 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:49 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:51 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:53 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:55 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:57 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:53:59 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:01 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:03 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:05 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:07 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:09 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:11 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:13 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:15 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:17 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:19 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:21 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:23 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:25 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:27 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:29 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:31 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:33 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:35 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:37 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:39 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:41 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:43 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:45 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:47 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:49 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:51 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:54 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:56 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:54:58 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:00 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:02 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:04 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:06 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:08 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:10 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:12 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:14 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:16 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:18 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:20 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:22 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:24 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:26 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:28 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:30 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:32 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:34 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:36 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:38 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:40 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:42 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:44 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:46 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:48 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:50 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:52 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:54 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:56 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:55:58 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:56:00 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:56:02 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-27 10:56:04 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
+    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)

@@ -156,6 +156,16 @@ const getAllCourses = async (query: any) => {
 
   const where: any = {};
 
+  // 🔥 FILTER BY PUBLISHED
+  if (query.instructorId && query.instructorId !== 'undefined') {
+    where.instructorId = query.instructorId;
+  } else if (query.showAll === 'true') {
+    // Admin or specific view: show everything
+  } else {
+    // Public view: only show published
+    where.isPublished = true;
+  }
+
   // 🔍 SEARCH (optimized)
   if (query.search) {
     where.OR = [
@@ -316,6 +326,24 @@ const updateCourse = async (id: string, payload: Partial<ICourse>) => {
 };
 
 /**
+ * Toggle the publish status of a course
+ */
+const togglePublish = async (id: string) => {
+  const existing = await prisma.course.findUnique({ where: { id } });
+  if (!existing) {
+    throw new CustomAppError(404, "Unable to toggle: Course not found");
+  }
+
+  const result = await prisma.course.update({
+    where: { id },
+    data: { isPublished: !existing.isPublished } as any,
+  });
+
+  await redis.del(`courses:${id}`);
+  return result;
+};
+
+/**
  * Remove a course and all its related content (cascades)
  */
 const deleteCourse = async (id: string) => {
@@ -435,4 +463,5 @@ export const courseService = {
   deleteCourse,
   getMyCourses,
   completeLesson,
+  togglePublish,
 };

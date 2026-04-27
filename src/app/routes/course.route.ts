@@ -36,8 +36,11 @@ router.post("/complete-lesson", protect, courseController.completeLesson);
 // Get course by ID
 router.get("/:id", optionalProtect, courseController.getCourseById);
 
-// Update a course by ID (Admin only)
-router.put("/:id", protect, authorize("admin"), courseController.updateCourse);
+// Update a course by ID
+router.put("/:id", protect, authorize("admin", "instructor"), courseController.updateCourse);
+
+// Toggle course publish status
+router.patch("/:id/toggle-publish", protect, authorize("admin", "instructor"), courseController.togglePublish);
 
 // Delete a course by ID (Admin only)
 router.delete("/:id", protect, authorize("admin"), courseController.deleteCourse);

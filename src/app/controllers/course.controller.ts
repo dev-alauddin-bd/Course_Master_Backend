@@ -19,7 +19,7 @@ const createCourse = catchAsyncHandler(async (req: Request, res: Response) => {
 // GET all courses with advanced features
 // ==============================
 const getAllCourses = catchAsyncHandler(async (req: Request, res: Response) => {
-  const { page, limit, search, category, sort } = req.query;
+  const { page, limit, search, category, sort, instructorId } = req.query;
 
   const courses = await courseService.getAllCourses({
     page: Number(page) || 1,
@@ -27,6 +27,7 @@ const getAllCourses = catchAsyncHandler(async (req: Request, res: Response) => {
     search: search?.toString(),
     category: category?.toString(),
     sort: sort?.toString(),
+    instructorId: instructorId?.toString(),
   });
   logger.debug("Fetched courses with query:", { query: req.query, count: Array.isArray(courses) ? courses.length : "N/A" });
 
@@ -73,6 +74,14 @@ const deleteCourse = catchAsyncHandler(async (req: Request, res: Response) => {
   sendResponse(res, 200, result.message);
 });
 
+// ==============================
+// TOGGLE PUBLISH status
+// ==============================
+const togglePublish = catchAsyncHandler(async (req: Request, res: Response) => {
+  const course = await courseService.togglePublish(req.params.id as string);
+  sendResponse(res, 200, "Course visibility updated", course);
+});
+
 /**
  * Retrieve all courses the current user is enrolled in
  */
@@ -90,6 +99,7 @@ export const courseController:CourseController = {
   deleteCourse,
   getMyCourses,
   completeLesson,
+  togglePublish,
 };
 
 type CourseController = {
@@ -100,4 +110,5 @@ type CourseController = {
   deleteCourse: RequestHandler;
   getMyCourses: RequestHandler;
   completeLesson: RequestHandler;
+  togglePublish: RequestHandler;
 }
