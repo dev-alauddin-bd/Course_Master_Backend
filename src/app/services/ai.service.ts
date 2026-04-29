@@ -12,7 +12,8 @@ const getModel = () => {
   
   return new ChatOpenAI({
     apiKey: process.env.OPENROUTER_API_KEY,
-    modelName: "openai/gpt-oss-120b:free", 
+    modelName: "google/gemini-2.0-flash-001", 
+    temperature: 0.3,
     configuration: {
       baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {
@@ -45,33 +46,34 @@ const chatAssistant = async (message: string, history: any[]) => {
           { description: { contains: message, mode: 'insensitive' as const } }
         ];
 
-    // 2. Fetch relevant context
-    const relevantCourses = await prisma.course.findMany({
-      where: { OR: searchFilter },
-      take: 3,
-      select: { 
-        title: true, 
-        description: true,
-        thumbnail: true,
-        category: { select: { name: true } } 
-      }
-    });
-
-    const relevantLessons = await prisma.lesson.findMany({
-      where: {
-        OR: words.length > 0 
-          ? words.flatMap(word => [
-              { title: { contains: word, mode: 'insensitive' as const } },
-              { content: { contains: word, mode: 'insensitive' as const } }
-            ])
-          : [{ title: { contains: message, mode: 'insensitive' as const } }]
-      },
-      take: 2,
-      select: { 
-        title: true, 
-        content: true,
-      }
-    });
+    // 2. Fetch relevant context in parallel
+    const [relevantCourses, relevantLessons] = await Promise.all([
+      prisma.course.findMany({
+        where: { OR: searchFilter },
+        take: 3,
+        select: { 
+          title: true, 
+          description: true,
+          thumbnail: true,
+          category: { select: { name: true } } 
+        }
+      }),
+      prisma.lesson.findMany({
+        where: {
+          OR: words.length > 0 
+            ? words.flatMap(word => [
+                { title: { contains: word, mode: 'insensitive' as const } },
+                { content: { contains: word, mode: 'insensitive' as const } }
+              ])
+            : [{ title: { contains: message, mode: 'insensitive' as const } }]
+        },
+        take: 2,
+        select: { 
+          title: true, 
+          content: true,
+        }
+      })
+    ]);
 
     const context = JSON.stringify({ courses: relevantCourses, lessons: relevantLessons });
 
@@ -93,13 +95,11 @@ const chatAssistant = async (message: string, history: any[]) => {
 
     const chain = prompt.pipe(chatModel).pipe(new StringOutputParser());
     
-    const response = await chain.invoke({
+    return await chain.stream({
       message,
       history: JSON.stringify(history),
       context: context
     });
-
-    return response;
   } catch (error) {
     console.error("Chat AI Error (Formatted RAG):", error);
     throw error;
@@ -109,34 +109,62 @@ const chatAssistant = async (message: string, history: any[]) => {
 const generateQuiz = async (lessonId: string) => {
   try {
     const chatModel = getModel();
+    
+    // 1. Fetch lesson with module and course context for better accuracy
     const lesson = await prisma.lesson.findUnique({
       where: { id: lessonId },
-      select: { title: true, content: true },
+      include: {
+        module: {
+          select: {
+            title: true,
+            course: {
+              select: { title: true }
+            }
+          }
+        }
+      }
     });
 
     if (!lesson) {
       throw new Error("Lesson not found");
     }
 
-    const prompt = PromptTemplate.fromTemplate(`
-      Generate a 5-question multiple-choice quiz based on the following lesson content.
-      Return the response in a strict JSON format.
+    const courseTitle = lesson.module?.course?.title || "N/A";
+    const moduleTitle = lesson.module?.title || "N/A";
 
-      Lesson Title: {title}
-      Lesson Content: {content}
+    // 2. Optimized Prompt for Speed and Accuracy
+    const prompt = PromptTemplate.fromTemplate(`
+      Task: Generate a 5-question MCQ quiz.
+      Context:
+      - Course: {courseTitle}
+      - Module: {moduleTitle}
+      - Lesson: {lessonTitle}
+      - Content: {content}
+
+      CRITICAL:
+      1. Return ONLY a JSON array. 
+      2. Questions MUST be strictly based on the provided content.
+      3. Format: [{{ "question": "string", "options": ["a", "b", "c", "d"], "correctAnswer": "string" }}]
     `);
 
     const chain = prompt.pipe(chatModel).pipe(new StringOutputParser());
     
     const response = await chain.invoke({
-      title: lesson.title,
-      content: lesson.content || "No content available. Generate general questions about the title.",
+      courseTitle,
+      moduleTitle,
+      lessonTitle: lesson.title,
+      content: lesson.content || "General knowledge about " + lesson.title,
     });
 
-    const cleanResponse = response.replace(/```json|```/g, "").trim();
+    // Fast cleanup and parse
+    const cleanResponse = response.substring(
+      response.indexOf("["),
+      response.lastIndexOf("]") + 1
+    );
+    
     return JSON.parse(cleanResponse);
   } catch (error) {
-    console.error("Quiz AI Error (OpenRouter):", error);
+    console.error("Quiz AI Error:", error);
     throw error;
   }
 };

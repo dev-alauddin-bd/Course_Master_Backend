@@ -4,12 +4,24 @@ import { AiService } from "../services/ai.service";
 const chatAssistant = async (req: Request, res: Response) => {
   try {
     const { message, history } = req.body;
-    console.log("Chat Request:", { message, historyLength: history?.length });
-    const response = await AiService.chatAssistant(message, history || []);
-    res.json({ success: true, data: response });
+    
+    // Set headers for SSE
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    const stream = await AiService.chatAssistant(message, history || []);
+
+    for await (const chunk of stream) {
+      res.write(`data: ${JSON.stringify({ chunk })}\n\n`);
+    }
+
+    res.write(`data: [DONE]\n\n`);
+    res.end();
   } catch (error: any) {
     console.error("Chat Controller Error:", error);
-    res.status(500).json({ success: false, message: error.message });
+    res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+    res.end();
   }
 };
 
