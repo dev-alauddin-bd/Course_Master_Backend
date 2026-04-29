@@ -523,3 +523,101 @@ getaddrinfo EAI_AGAIN db.prisma.io
     at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
 2026-04-27 10:56:04 [error]: Error: getaddrinfo EAI_AGAIN enormous-seahorse-84793.upstash.io
     at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)
+2026-04-29 18:48:51 [error]: PrismaClientKnownRequestError: 
+Invalid `prisma.review.findMany()` invocation in
+/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/review.service.ts:37:30
+
+  34 };
+  35 
+  36 const getAllReviews = async () => {
+→ 37   return await prisma.review.findMany(
+getaddrinfo EAI_AGAIN db.prisma.io
+    at Gr.handleRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:237:13)
+    at Gr.handleAndLogRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:183:12)
+    at Gr.request (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:152:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at a (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
+    at Object.getAllReviews (/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/review.service.ts:37:10)
+    at /media/alauddin/Work_Drive1/projects/course/backend/src/app/controllers/review.controller.ts:24:18
+2026-04-29 18:48:51 [error]: PrismaClientKnownRequestError: 
+Invalid `prisma.category.findMany()` invocation in
+/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/category.service.ts:15:32
+
+  12  * @returns Array of categories
+  13  */
+  14 const getAllCategories = async () => {
+→ 15   return await prisma.category.findMany(
+getaddrinfo EAI_AGAIN db.prisma.io
+    at Gr.handleRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:237:13)
+    at Gr.handleAndLogRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:183:12)
+    at Gr.request (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:152:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at a (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
+    at Object.getAllCategories (/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/category.service.ts:15:10)
+    at /media/alauddin/Work_Drive1/projects/course/backend/src/app/controllers/category.controller.ts:10:22
+2026-04-29 18:48:55 [error]: PrismaClientKnownRequestError: 
+Invalid `prisma.category.findMany()` invocation in
+/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/category.service.ts:15:32
+
+  12  * @returns Array of categories
+  13  */
+  14 const getAllCategories = async () => {
+→ 15   return await prisma.category.findMany(
+getaddrinfo EAI_AGAIN db.prisma.io
+    at Gr.handleRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:237:13)
+    at Gr.handleAndLogRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:183:12)
+    at Gr.request (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:152:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at a (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
+    at Object.getAllCategories (/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/category.service.ts:15:10)
+    at /media/alauddin/Work_Drive1/projects/course/backend/src/app/controllers/category.controller.ts:10:22
+2026-04-29 18:48:55 [error]: PrismaClientKnownRequestError: 
+Invalid `prisma.review.findMany()` invocation in
+/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/review.service.ts:37:30
+
+  34 };
+  35 
+  36 const getAllReviews = async () => {
+→ 37   return await prisma.review.findMany(
+getaddrinfo EAI_AGAIN db.prisma.io
+    at Gr.handleRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:237:13)
+    at Gr.handleAndLogRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:183:12)
+    at Gr.request (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:152:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at a (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
+    at Object.getAllReviews (/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/review.service.ts:37:10)
+    at /media/alauddin/Work_Drive1/projects/course/backend/src/app/controllers/review.controller.ts:24:18
+2026-04-29 18:49:32 [error]: PrismaClientKnownRequestError: 
+Invalid `prisma.review.findMany()` invocation in
+/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/review.service.ts:37:30
+
+  34 };
+  35 
+  36 const getAllReviews = async () => {
+→ 37   return await prisma.review.findMany(
+getaddrinfo EAI_AGAIN db.prisma.io
+    at Gr.handleRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:237:13)
+    at Gr.handleAndLogRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:183:12)
+    at Gr.request (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:152:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at a (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
+    at Object.getAllReviews (/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/review.service.ts:37:10)
+    at /media/alauddin/Work_Drive1/projects/course/backend/src/app/controllers/review.controller.ts:24:18
+2026-04-29 18:49:32 [error]: PrismaClientKnownRequestError: 
+Invalid `prisma.category.findMany()` invocation in
+/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/category.service.ts:15:32
+
+  12  * @returns Array of categories
+  13  */
+  14 const getAllCategories = async () => {
+→ 15   return await prisma.category.findMany(
+getaddrinfo EAI_AGAIN db.prisma.io
+    at Gr.handleRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:237:13)
+    at Gr.handleAndLogRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:183:12)
+    at Gr.request (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:152:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at a (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
+    at Object.getAllCategories (/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/category.service.ts:15:10)
+    at /media/alauddin/Work_Drive1/projects/course/backend/src/app/controllers/category.controller.ts:10:22
+2026-04-29 18:50:55 [error]: Error: read ECONNRESET
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
