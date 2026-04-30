@@ -5,23 +5,27 @@ import { UserRole } from "../interfaces/user.interface";
 
 const router = Router();
 
-// ==============================
-// LESSON ROUTES
-// ==============================
 
-// Add a new lesson to a module (INSTRUCTOR only)
+//  ================================== Add a new lesson to a module (INSTRUCTOR only) =========================================
 router.post("/", protect, authorize(UserRole.INSTRUCTOR), lessonController.addLesson);
 
-// Update a lesson (INSTRUCTOR only)
+// ============================= Get all lessons (Instructor & Student only) ================================
+router.get("/", protect, authorize(UserRole.INSTRUCTOR, UserRole.STUDENT), lessonController.getAllLessons);
+
+// ==============================
+// DYNAMIC ROUTES (with :id param) - must come last
+// ==============================
+
+// ========================================= Get a specific lesson by ID =====================================
+router.get("/:lessonId", protect, lessonController.getLessonById);
+
+// ===================================== Update a lesson (INSTRUCTOR only) ===============================================
 router.patch("/:lessonId", protect, authorize(UserRole.INSTRUCTOR), lessonController.updateLesson);
 
-// Delete a lesson (INSTRUCTOR only)
+// ===================================== Soft Delete a lesson (INSTRUCTOR only) ===============================================
 router.delete("/:lessonId", protect, authorize(UserRole.INSTRUCTOR), lessonController.deleteLesson);
 
-// Get all lessons (Instructor Only)
-router.get("/", protect, lessonController.getAllLessons);
 
-// Get a specific lesson by ID
-router.get("/:lessonId", protect, lessonController.getLessonById);
+
 
 export const lessonRouter: Router = router;

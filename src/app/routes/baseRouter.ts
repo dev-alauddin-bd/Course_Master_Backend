@@ -20,17 +20,17 @@ import { liveSessionRoutes } from "./liveSession.route";
 
 const router = Router();
 
-// Define all main route paths and their corresponding routers
+// ==================================== Define all main route paths and their corresponding routers==========================
 const routes = [
-  { path: "/auth", handler: authRouter },          // Auth routes: signup, login, refresh token
-  { path: "/courses", handler: courseRouter },     // Courses routes: CRUD, enroll, complete lessons
-  { path: "/categories", handler: categoryRouter },// Categories routes: CRUD
-  { path: "/modules", handler: moduleRouter },     // Modules & Lessons routes: add, get, update
-  { path: "/lessons", handler: lessonRouter },     // Dedicated Lesson routes
-  { path: "/enrollments", handler: enrollRouter }, // Enrollment management
-  { path: "/assignments", handler: assignmentRouter }, // Assignment routes: create assignments
-  { path: "/reviews", handler: reviewRoutes },     // Testimonials/Reviews
-  { path: "/ai", handler: aiRouter },              // AI features: chat, quiz, search, recommendations
+  { path: "/auth", handler: authRouter },          
+  { path: "/courses", handler: courseRouter },     
+  { path: "/categories", handler: categoryRouter },
+  { path: "/modules", handler: moduleRouter },     
+  { path: "/lessons", handler: lessonRouter },    
+  { path: "/enrollments", handler: enrollRouter },
+  { path: "/assignments", handler: assignmentRouter },
+  { path: "/reviews", handler: reviewRoutes },     
+  { path: "/ai", handler: aiRouter },           
   { path: "/live-sessions", handler: liveSessionRoutes },
 
 
@@ -41,10 +41,10 @@ const routes = [
 
 ];
 
-// Attach each router to its path
+// ===================================== Attach each router to its path============================================
 routes.forEach((route) => {
   router.use(route.path, route.handler);
 });
 
-// Export the base router to use in app.ts or server.ts
+
 export const baseRouter : Router= router;

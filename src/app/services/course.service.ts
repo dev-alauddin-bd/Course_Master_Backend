@@ -455,6 +455,36 @@ export const getMyCourses = async (userId: string) => {
   return courses;
 };
 
+
+const getRecommendations = async (userId: string) => {
+  try {
+    const userEnrollments = await prisma.enrollment.findMany({
+      where: { userId },
+      include: { course: { include: { category: true } } },
+    });
+
+    const categories = userEnrollments.map((e) => e.course.category?.name).filter(Boolean);
+    
+    const recommendedCourses = await prisma.course.findMany({
+      where: {
+        category: {
+          name: { in: categories as string[] }
+        },
+        enrolledUsers: {
+          none: { userId }
+        }
+      },
+      take: 3,
+      include: { category: true, instructor: { select: { name: true } } }
+    });
+
+    return recommendedCourses;
+  } catch (error) {
+    console.error("Recommendation Error:", error);
+    throw error;
+  }
+};
+
 export const courseService = {
   createCourse,
   getAllCourses,
@@ -464,4 +494,5 @@ export const courseService = {
   getMyCourses,
   completeLesson,
   togglePublish,
+  getRecommendations
 };

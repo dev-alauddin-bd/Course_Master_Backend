@@ -57,6 +57,19 @@ const completeLesson = catchAsyncHandler(async (req: Request, res: Response) => 
 });
 
 
+// =============================== recomendayions =========================
+
+const getRecommendations = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const recommendations = await courseService.getRecommendations(userId as string);
+    res.json({ success: true, data: recommendations });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 
 // ==============================
 // UPDATE a course
@@ -91,7 +104,7 @@ const getMyCourses = catchAsyncHandler(async (req: Request, res: Response) => {
   sendResponse(res, 200, "Your enrolled courses fetched successfully", courses);
 });
 
-export const courseController:CourseController = {
+export const courseController: CourseController = {
   createCourse,
   getAllCourses,
   getCourseById,
@@ -100,6 +113,7 @@ export const courseController:CourseController = {
   getMyCourses,
   completeLesson,
   togglePublish,
+  getRecommendations
 };
 
 type CourseController = {
@@ -111,4 +125,5 @@ type CourseController = {
   getMyCourses: RequestHandler;
   completeLesson: RequestHandler;
   togglePublish: RequestHandler;
+  getRecommendations: RequestHandler;
 }

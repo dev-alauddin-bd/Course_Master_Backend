@@ -39,29 +39,10 @@ const generateQuiz = async (req: Request, res: Response) => {
   }
 };
 
-const searchAssistant = async (req: Request, res: Response) => {
-  try {
-    const { query } = req.query;
-    const result = await AiService.searchAssistant(query as string);
-    res.json({ success: true, data: result });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-const getRecommendations = async (req: Request, res: Response) => {
-  try {
-    const userId = req.user?.id; 
-    const recommendations = await AiService.getRecommendations(userId as string);
-    res.json({ success: true, data: recommendations });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
 
 export const AiController = {
   chatAssistant,
   generateQuiz,
-  searchAssistant,
-  getRecommendations,
+
+
 };

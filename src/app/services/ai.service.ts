@@ -24,6 +24,7 @@ const getModel = () => {
   });
 };
 
+// =================================== Chat =========================================
 const chatAssistant = async (message: string, history: any[]) => {
   try {
     const chatModel = getModel();
@@ -106,6 +107,8 @@ const chatAssistant = async (message: string, history: any[]) => {
   }
 };
 
+// ==========================================  Generate Quiz=====================================
+
 const generateQuiz = async (lessonId: string) => {
   try {
     const chatModel = getModel();
@@ -169,82 +172,13 @@ const generateQuiz = async (lessonId: string) => {
   }
 };
 
-const searchAssistant = async (query: string) => {
-  try {
-    const chatModel = getModel();
-    const courses = await prisma.course.findMany({
-      where: {
-        OR: [
-          { title: { contains: query, mode: 'insensitive' } },
-          { description: { contains: query, mode: 'insensitive' } },
-          { category: { name: { contains: query, mode: 'insensitive' } } }
-        ],
-      },
-      take: 5,
-      include: { category: true }
-    });
 
-    const prompt = PromptTemplate.fromTemplate(`
-      You are "CourseMaster Search Assistant". 
-      Based on the following course list, answer the user's query: "{query}"
-      
-      INSTRUCTIONS:
-      1. Use Markdown for formatting. Use bold for course titles.
-      2. Group information logically. 
-      3. Be concise but professional.
-      
-      Courses from Database: {courses}
-    `);
 
-    const chain = prompt.pipe(chatModel).pipe(new StringOutputParser());
-    
-    const response = await chain.invoke({
-      query,
-      courses: JSON.stringify(courses),
-    });
 
-    return {
-      answer: response,
-      relevantCourses: courses,
-    };
-  } catch (error) {
-    console.error("Search AI Error (OpenRouter):", error);
-    throw error;
-  }
-};
-
-const getRecommendations = async (userId: string) => {
-  try {
-    const userEnrollments = await prisma.enrollment.findMany({
-      where: { userId },
-      include: { course: { include: { category: true } } },
-    });
-
-    const categories = userEnrollments.map((e) => e.course.category?.name).filter(Boolean);
-    
-    const recommendedCourses = await prisma.course.findMany({
-      where: {
-        category: {
-          name: { in: categories as string[] }
-        },
-        enrolledUsers: {
-          none: { userId }
-        }
-      },
-      take: 3,
-      include: { category: true, instructor: { select: { name: true } } }
-    });
-
-    return recommendedCourses;
-  } catch (error) {
-    console.error("Recommendation Error:", error);
-    throw error;
-  }
-};
 
 export const AiService = {
   chatAssistant,
   generateQuiz,
-  searchAssistant,
-  getRecommendations,
+  
+
 };
