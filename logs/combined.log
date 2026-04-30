@@ -1065,3 +1065,6 @@ The table `public.live_sessions` does not exist in the current database.
 2026-04-30 13:03:32 [info]: 🚀 Server listening on port 5000
 2026-04-30 13:03:33 [info]: 🚀 Redis connected successfully
 2026-04-30 13:03:59 [debug]: Fetched courses with query:
+2026-04-30 15:12:23 [info]: 🚀 Server listening on port 5000
+2026-04-30 15:12:24 [info]: 🚀 Redis connected successfully
+2026-04-30 15:13:22 [debug]: Fetched courses with query:
