@@ -673,3 +673,19 @@ The table `public.live_sessions` does not exist in the current database.
     at a (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
     at Object.getAllSessions (/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/liveSession.service.ts:27:20)
     at /media/alauddin/Work_Drive1/projects/course/backend/src/app/controllers/liveSession.controller.ts:12:18
+2026-04-30 10:33:56 [error]: PrismaClientKnownRequestError: 
+Invalid `prisma.liveSession.findMany()` invocation in
+/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/liveSession.service.ts:27:45
+
+  24 };
+  25 
+  26 const getAllSessions = async () => {
+→ 27   const sessions = await prisma.liveSession.findMany(
+The table `public.live_sessions` does not exist in the current database.
+    at Gr.handleRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:237:13)
+    at Gr.handleAndLogRequestError (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:183:12)
+    at Gr.request (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/RequestHandler.ts:152:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at a (/media/alauddin/Work_Drive1/projects/course/backend/node_modules/.pnpm/@prisma+client@7.7.0_prisma@7.7.0_@types+react@19.2.14_react-dom@19.2.5_react@19.2.5__r_453c036cc728b0fc87cc0e5da870c904/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
+    at Object.getAllSessions (/media/alauddin/Work_Drive1/projects/course/backend/src/app/services/liveSession.service.ts:27:20)
+    at /media/alauddin/Work_Drive1/projects/course/backend/src/app/controllers/liveSession.controller.ts:12:18

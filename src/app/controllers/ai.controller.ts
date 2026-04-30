@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { AiService } from "../services/ai.service";
 
+
+// ===================================== Chat Assistant ============================
 const chatAssistant = async (req: Request, res: Response) => {
   try {
     const { message, history } = req.body;
@@ -25,6 +27,8 @@ const chatAssistant = async (req: Request, res: Response) => {
   }
 };
 
+
+// =================================================== Generate Quiz =====================================
 const generateQuiz = async (req: Request, res: Response) => {
   try {
     const { lessonId } = req.params;
