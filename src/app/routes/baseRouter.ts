@@ -16,6 +16,7 @@ import { lessonRouter } from "./lesson.route";
 import { studentSubmissionRouter } from "./studentSubmission.route";
 
 import { aiRouter } from "./ai.route";
+import { liveSessionRoutes } from "./liveSession.route";
 
 const router = Router();
 
@@ -30,6 +31,7 @@ const routes = [
   { path: "/assignments", handler: assignmentRouter }, // Assignment routes: create assignments
   { path: "/reviews", handler: reviewRoutes },     // Testimonials/Reviews
   { path: "/ai", handler: aiRouter },              // AI features: chat, quiz, search, recommendations
+  { path: "/live-sessions", handler: liveSessionRoutes },
 
 
   { path: "/dashboard", handler: dashboardRouter },
