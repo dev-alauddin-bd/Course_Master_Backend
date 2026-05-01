@@ -31,23 +31,47 @@ export const AssignmentService = {
     });
   },
 
-  // ============================== GET Instructor Assignments ==============================
-  async getAssignmentsIntoIntrutorCourses(instructorId: string) {
-    return await prisma.assignment.findMany({
-      where: {
-        module: {
-          course: { instructorId: instructorId },
-        },
+  async getAssignmentsIntoIntrutorCourses(instructorId: string, query: any = {}) {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const where = {
+      module: {
+        course: { instructorId: instructorId },
       },
-      include: {
-        module: {
-          select: {
-            title: true,
-            course: { select: { title: true } },
+    };
+
+    const [assignments, total] = await Promise.all([
+      prisma.assignment.findMany({
+        where,
+        select: {
+          id: true,
+          description: true,
+          moduleId: true,
+          deadline: true,
+          createdAt: true,
+          updatedAt: true,
+          module: {
+            select: {
+              title: true,
+              course: { select: { title: true } },
+            },
           },
         },
-      },
-    });
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.assignment.count({ where })
+    ]);
+
+    return {
+      assignments,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    };
   },
 
   // ============================== UPDATE Assignment ==============================

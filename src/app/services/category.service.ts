@@ -5,16 +5,35 @@
 import { prisma } from "../../lib/prisma";
 
 export const categoryService = {
-  // ============================== GET ALL Categories ==============================
-  async getAllCategories() {
-    return await prisma.category.findMany({
-      include: {
-        _count: {
-          select: { courses: true }
-        }
-      },
-      orderBy: { name: "asc" }
-    });
+  async getAllCategories(query: any = {}) {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [categories, total] = await Promise.all([
+      prisma.category.findMany({
+        select: {
+          id: true,
+          name: true,
+          createdAt: true,
+          updatedAt: true,
+          _count: {
+            select: { courses: true }
+          }
+        },
+        orderBy: { name: "asc" },
+        skip,
+        take: limit,
+      }),
+      prisma.category.count()
+    ]);
+
+    return {
+      categories,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    };
   },
 
   // ============================== CREATE Category ==============================

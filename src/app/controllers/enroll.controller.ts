@@ -18,9 +18,8 @@ const enrollCourse = catchAsyncHandler(async (req: Request, res: Response) => {
 
 // ============================== GET My Enrollments ==============================
 const getMyEnrollments = catchAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user!.id;
-  const enrollments = await enrollService.getMyEnrollments(userId);
-  sendResponse(res, 200, "Enrollments fetched successfully", enrollments);
+  const result = await enrollService.getMyEnrollments(req.user!.id, req.query);
+  sendResponse(res, 200, "Enrollments fetched successfully", result);
 });
 
 // ============================== GET Enrolled Content ==============================

@@ -43,6 +43,8 @@ model User {
   updatedAt             DateTime               @updatedAt
   completedLessons      CompletedLesson[]
 
+  @@index([role])
+  @@index([status])
   @@map("users")
 }
 
@@ -85,6 +87,8 @@ model Course {
 
   @@index([categoryId])
   @@index([instructorId])
+  @@index([isPublished])
+  @@index([isDeleted])
   @@map("courses")
 }
 
@@ -99,6 +103,8 @@ model Module {
   order       Int          @default(0)
   isDeleted   Boolean      @default(false)
 
+  @@index([courseId])
+  @@index([isDeleted])
   @@map("modules")
 }
 
@@ -136,6 +142,7 @@ model Lesson {
   isDeleted        Boolean           @default(false)
 
   @@index([moduleId])
+  @@index([isDeleted])
   @@map("lessons")
 }
 
@@ -284,6 +291,9 @@ model Job {
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
+  @@index([category])
+  @@index([type])
+  @@index([isPublished])
   @@map("jobs")
 }
 
@@ -301,5 +311,7 @@ model JobApplication {
 
   appliedAt   DateTime @default(now())
 
+  @@index([jobId])
+  @@index([status])
   @@map("job_applications")
 }

@@ -15,9 +15,8 @@ const createAssignment = catchAsyncHandler(async (req: Request, res: Response) =
 
 // ============================== GET Instructor Assignments ==============================
 const getAssignmentsIntoIntrutorCourses = catchAsyncHandler(async (req: Request, res: Response) => {
-  const id = req.user?.id;
-  const assignments = await AssignmentService.getAssignmentsIntoIntrutorCourses(id as string);
-  sendResponse(res, 200, "Assignments fetched successfully", assignments);
+  const result = await AssignmentService.getAssignmentsIntoIntrutorCourses(req.user!.id, req.query);
+  sendResponse(res, 200, "Instructor assignments fetched successfully", result);
 });
 
 // ============================== UPDATE Assignment ==============================

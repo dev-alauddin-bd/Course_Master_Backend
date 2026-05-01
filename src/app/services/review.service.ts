@@ -27,20 +27,43 @@ export const reviewService = {
 
     return await prisma.review.create({
       data: payload,
-      include: {
+      select: {
+        id: true,
+        content: true,
+        rating: true,
+        createdAt: true,
         user: { select: { name: true, avatar: true, role: true } }
       }
     });
   },
 
-  // ============================== GET ALL Reviews ==============================
-  async getAllReviews() {
-    return await prisma.review.findMany({
-      include: {
-        user: { select: { name: true, avatar: true, role: true } }
-      },
-      orderBy: { createdAt: "desc" }
-    });
+  async getAllReviews(query: any = {}) {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [reviews, total] = await Promise.all([
+      prisma.review.findMany({
+        select: {
+          id: true,
+          content: true,
+          rating: true,
+          createdAt: true,
+          user: { select: { name: true, avatar: true, role: true } }
+        },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.review.count()
+    ]);
+
+    return {
+      reviews,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    };
   },
 
   // ============================== DELETE Review ==============================

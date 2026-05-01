@@ -24,7 +24,7 @@ const createReview = catchAsyncHandler(async (req: Request, res: Response) => {
 
 // ============================== GET ALL Reviews ==============================
 const getAllReviews = catchAsyncHandler(async (req: Request, res: Response) => {
-  const result = await reviewService.getAllReviews();
+  const result = await reviewService.getAllReviews(req.query);
   sendResponse(res, 200, "Reviews fetched successfully", result);
 });
 

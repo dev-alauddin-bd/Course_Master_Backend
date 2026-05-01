@@ -116,7 +116,10 @@ export const AiService = {
       
       const lesson = await prisma.lesson.findUnique({
         where: { id: lessonId },
-        include: {
+        select: {
+          id: true,
+          title: true,
+          content: true,
           module: {
             select: {
               title: true,

@@ -54,7 +54,12 @@ export const moduleService = {
   async getAllModules(courseId?: string) {
     return await prisma.module.findMany({
       where: courseId ? { courseId } : {},
-      include: {
+      select: {
+        id: true,
+        title: true,
+        courseId: true,
+        order: true,
+        isDeleted: true,
         course: { select: { title: true } },
         _count: { select: { lessons: true } }
       },

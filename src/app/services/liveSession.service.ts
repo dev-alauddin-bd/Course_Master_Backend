@@ -27,11 +27,29 @@ export const liveSessionService = {
   },
 
   // ============================== GET ALL Sessions ==============================
-  async getAllSessions() {
-    return await prisma.liveSession.findMany({
-      where: { isPublished: true },
-      orderBy: { sessionDate: 'asc' }
-    });
+  async getAllSessions(query: any = {}) {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const where = { isPublished: true };
+
+    const [sessions, total] = await Promise.all([
+      prisma.liveSession.findMany({
+        where,
+        orderBy: { sessionDate: 'asc' },
+        skip,
+        take: limit,
+      }),
+      prisma.liveSession.count({ where })
+    ]);
+
+    return {
+      sessions,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    };
   },
 
   // ============================== GET Session By ID ==============================
@@ -69,10 +87,28 @@ export const liveSessionService = {
   },
 
   // ============================== GET Registrants ==============================
-  async getRegistrantsBySessionId(sessionId: string) {
-    return await prisma.liveRegistration.findMany({
-      where: { sessionId },
-      orderBy: { registeredAt: 'desc' }
-    });
+  async getRegistrantsBySessionId(sessionId: string, query: any = {}) {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const where = { sessionId };
+
+    const [registrants, total] = await Promise.all([
+      prisma.liveRegistration.findMany({
+        where,
+        orderBy: { registeredAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.liveRegistration.count({ where })
+    ]);
+
+    return {
+      registrants,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    };
   },
 };

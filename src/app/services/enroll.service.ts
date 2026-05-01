@@ -26,11 +26,42 @@ export const enrollService = {
   },
 
   // ============================== GET My Enrollments ==============================
-  async getMyEnrollments(userId: string) {
-    return await prisma.enrollment.findMany({
-      where: { userId },
-      include: { course: true }
-    });
+  async getMyEnrollments(userId: string, query: any = {}) {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [enrollments, total] = await Promise.all([
+      prisma.enrollment.findMany({
+        where: { userId },
+        select: {
+          id: true,
+          enrolledAt: true,
+          lastActivity: true,
+          courseId: true,
+          course: {
+            select: {
+              id: true,
+              title: true,
+              thumbnail: true,
+              price: true,
+              instructor: { select: { name: true } }
+            }
+          }
+        },
+        orderBy: { enrolledAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.enrollment.count({ where: { userId } })
+    ]);
+
+    return {
+      enrollments,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    };
   },
 
   // ============================== GET Enrolled Content ==============================
@@ -38,14 +69,33 @@ export const enrollService = {
     // Check if course exists
     const course = await prisma.course.findUnique({
       where: { id: courseId },
-      include: {
-        category: true,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        thumbnail: true,
+        price: true,
+        instructorId: true,
+        category: { select: { id: true, name: true } },
         modules: {
-          include: {
-            assignments: true,
+          select: {
+            id: true,
+            title: true,
+            order: true,
+            assignments: {
+              select: { id: true, description: true }
+            },
             lessons: {
-              include: {
-                completedByUsers: { where: { userId } }
+              select: {
+                id: true,
+                title: true,
+                videoUrl: true,
+                duration: true,
+                order: true,
+                completedByUsers: { 
+                  where: { userId },
+                  select: { id: true }
+                }
               },
               orderBy: { order: 'asc' }
             }

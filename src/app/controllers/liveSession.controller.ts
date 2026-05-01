@@ -15,7 +15,7 @@ const registerForSession = catchAsyncHandler(async (req: Request, res: Response)
 
 // ============================== GET ALL Sessions ==============================
 const getAllSessions = catchAsyncHandler(async (req: Request, res: Response) => {
-  const result = await liveSessionService.getAllSessions();
+  const result = await liveSessionService.getAllSessions(req.query);
   sendResponse(res, 200, "Sessions fetched successfully", result);
 });
 
@@ -45,7 +45,7 @@ const deleteSession = catchAsyncHandler(async (req: Request, res: Response) => {
 
 // ============================== GET Registrants ==============================
 const getRegistrants = catchAsyncHandler(async (req: Request, res: Response) => {
-  const result = await liveSessionService.getRegistrantsBySessionId(req.params.id as string);
+  const result = await liveSessionService.getRegistrantsBySessionId(req.params.id as string, req.query);
   sendResponse(res, 200, "Registrants fetched successfully", result);
 });
 

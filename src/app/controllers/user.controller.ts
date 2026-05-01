@@ -10,7 +10,7 @@ import { IUser } from "../interfaces/user.interface";
 
 // ============================== GET ALL Users ==============================
 const getAllUsers = catchAsyncHandler(async (req: Request, res: Response) => {
-  const users = await userService.getAllUsers(req.user as IUser);
+  const users = await userService.getAllUsers(req.user as IUser, req.query);
   sendResponse(res, 200, "Users retrieved successfully", users);
 });
 

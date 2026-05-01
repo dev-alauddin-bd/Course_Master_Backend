@@ -74,11 +74,10 @@ const togglePublish = catchAsyncHandler(async (req: Request, res: Response) => {
   sendResponse(res, 200, "Course visibility updated", course);
 });
 
-// ============================== GET My Enrolled Courses ==============================
+// ============================== GET My Courses ==============================
 const getMyCourses = catchAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user!.id;
-  const courses = await courseService.getMyCourses(userId);
-  sendResponse(res, 200, "Your enrolled courses fetched successfully", courses);
+  const result = await courseService.getMyCourses(req.user!.id, req.query);
+  sendResponse(res, 200, "Enrolled courses fetched successfully", result);
 });
 
 export const courseController: CourseController = {

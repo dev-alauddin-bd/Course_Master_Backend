@@ -9,7 +9,7 @@ import { sendResponse } from "../utils/sendResponse";
 
 // ============================== GET ALL Categories ==============================
 const getCategories = catchAsyncHandler(async (req: Request, res: Response) => {
-  const categories = await categoryService.getAllCategories();
+  const categories = await categoryService.getAllCategories(req.query);
   sendResponse(res, 200, "Categories fetched successfully", categories);
 });
 

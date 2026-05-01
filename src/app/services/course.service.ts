@@ -127,19 +127,43 @@ const getAllCourses = async (query: any) => {
 const getCourseById = async (id: string, userId?: string) => {
   const course = await prisma.course.findUnique({
     where: { id },
-    include: {
-      category: true,
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      thumbnail: true,
+      previewVideo: true,
+      price: true,
+      instructorId: true,
+      isPublished: true,
+      createdAt: true,
+      updatedAt: true,
+      category: { select: { id: true, name: true } },
       instructor: { select: { name: true, avatar: true } },
       modules: {
-        include: {
-          assignments: true,
-          lessons: { orderBy: { order: 'asc' } }
+        select: {
+          id: true,
+          title: true,
+          order: true,
+          assignments: {
+            select: { id: true, description: true, deadline: true }
+          },
+          lessons: {
+            select: { id: true, title: true, videoUrl: true, duration: true, order: true },
+            orderBy: { order: 'asc' }
+          }
         },
         orderBy: { order: 'asc' }
       },
       _count: { select: { enrolledUsers: true } },
       reviews: {
-        include: { user: { select: { name: true, avatar: true } } },
+        select: {
+          id: true,
+          content: true,
+          rating: true,
+          createdAt: true,
+          user: { select: { name: true, avatar: true } }
+        },
         orderBy: { createdAt: "desc" }
       }
     }
@@ -170,7 +194,15 @@ const updateCourse = async (id: string, payload: Partial<ICourse>) => {
   return await prisma.course.update({
     where: { id },
     data: payload as any,
-    include: { category: true } as any
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      thumbnail: true,
+      price: true,
+      isPublished: true,
+      category: { select: { id: true, name: true } }
+    }
   });
 };
 
@@ -225,29 +257,55 @@ const completeLesson = async (userId: string, courseId: string, lessonId: string
 };
 
 // ============================== GET My Enrolled Courses ==============================
-const getMyCourses = async (userId: string) => {
-  const enrollments = await prisma.enrollment.findMany({
-    where: { userId },
-    include: {
-      course: {
-        include: {
-          instructor: { select: { name: true, avatar: true } },
-          modules: {
-            include: {
-              lessons: {
-                include: {
-                  completedByUsers: { where: { userId } }
-                }
+const getMyCourses = async (userId: string, query: any = {}) => {
+  const page = Number(query.page) || 1;
+  const limit = Number(query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const [enrollments, total] = await Promise.all([
+    prisma.enrollment.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        enrolledAt: true,
+        lastActivity: true,
+        courseId: true,
+        course: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            thumbnail: true,
+            price: true,
+            instructorId: true,
+            categoryId: true,
+            isPublished: true,
+            instructor: { select: { name: true, avatar: true } },
+            modules: {
+              select: {
+                id: true,
+                lessons: {
+                  select: {
+                    id: true,
+                    completedByUsers: { 
+                      where: { userId },
+                      select: { id: true }
+                    }
+                  }
+                },
               },
             },
           },
         },
       },
-    },
-    orderBy: { lastActivity: "desc" },
-  });
+      orderBy: { lastActivity: "desc" },
+      skip,
+      take: limit,
+    }),
+    prisma.enrollment.count({ where: { userId } })
+  ]);
 
-  return enrollments.map((enrollment) => {
+  const courses = enrollments.map((enrollment) => {
     let totalLessons = 0;
     let completedLessonsCount = 0;
 
@@ -281,6 +339,13 @@ const getMyCourses = async (userId: string) => {
       progressPercentage,
     };
   });
+
+  return {
+    courses,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit)
+  };
 };
 
 // ============================== GET Recommendations ==============================
@@ -288,7 +353,7 @@ const getRecommendations = async (userId: string) => {
   try {
     const userEnrollments = await prisma.enrollment.findMany({
       where: { userId },
-      include: { course: { include: { category: true } } },
+      select: { course: { select: { category: { select: { name: true } } } } },
     });
 
     const categories = userEnrollments.map((e) => e.course.category?.name).filter(Boolean);
@@ -299,7 +364,14 @@ const getRecommendations = async (userId: string) => {
         enrolledUsers: { none: { userId } }
       },
       take: 3,
-      include: { category: true, instructor: { select: { name: true } } }
+      select: {
+        id: true,
+        title: true,
+        thumbnail: true,
+        price: true,
+        category: { select: { id: true, name: true } },
+        instructor: { select: { name: true, avatar: true } }
+      }
     });
   } catch (error) {
     console.error("Recommendation Error:", error);

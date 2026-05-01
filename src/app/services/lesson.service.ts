@@ -11,7 +11,13 @@ export const lessonService = {
   async getAllLessons(moduleId?: string) {
     return await prisma.lesson.findMany({
       where: moduleId ? { moduleId } : {},
-      include: {
+      select: {
+        id: true,
+        title: true,
+        videoUrl: true,
+        duration: true,
+        moduleId: true,
+        order: true,
         module: { 
           select: { 
             title: true,
@@ -27,7 +33,14 @@ export const lessonService = {
   async getLessonById(lessonId: string) {
     const lesson = await prisma.lesson.findUnique({
       where: { id: lessonId },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        videoUrl: true,
+        duration: true,
+        moduleId: true,
+        order: true,
         module: {
           select: {
             title: true,

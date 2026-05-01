@@ -82,27 +82,49 @@ export const dashboardService = {
 
     // ------------ STUDENT ANALYTICS ------------
     if (role === UserRole.STUDENT) {
-      const [myEnrolledCount, totalCompletedLessons, pendingAssignments] = await Promise.all([
+      const [myEnrolledCount, totalCompletedLessons, pendingAssignments, myEnrollments] = await Promise.all([
         prisma.enrollment.count({ where: { userId } }),
         prisma.completedLesson.count({ where: { userId } }),
         prisma.assignment.count({
           where: { module: { course: { enrolledUsers: { some: { userId } } } } }
+        }),
+        prisma.enrollment.findMany({
+          where: { userId },
+          select: { 
+            courseId: true,
+            course: { 
+              select: { 
+                id: true,
+                title: true,
+                modules: { 
+                  select: { 
+                    id: true,
+                    lessons: { select: { id: true } } 
+                  } 
+                } 
+              } 
+            } 
+          }
         })
       ]);
 
-      const myEnrollments = await prisma.enrollment.findMany({
+      // Fetch all completed lesson IDs for this user in one go to avoid N+1
+      const completedLessonRecords = await prisma.completedLesson.findMany({
         where: { userId },
-        include: { course: { include: { modules: { include: { lessons: { select: { id: true } } } } } } }
+        select: { lessonId: true }
       });
+      const completedLessonIds = new Set(completedLessonRecords.map(r => r.lessonId));
 
       let completedCoursesCount = 0;
       for (const enrollment of myEnrollments) {
-        const totalLessonsInCourse = enrollment.course.modules.reduce((acc, m) => acc + m.lessons.length, 0);
-        const completedInThisCourse = await prisma.completedLesson.count({
-          where: { userId, lesson: { module: { courseId: enrollment.courseId } } }
-        });
-        if (totalLessonsInCourse > 0 && completedInThisCourse === totalLessonsInCourse) {
-          completedCoursesCount++;
+        const lessons = enrollment.course.modules.flatMap(m => m.lessons);
+        const totalLessonsInCourse = lessons.length;
+        
+        if (totalLessonsInCourse > 0) {
+          const completedInThisCourse = lessons.filter(l => completedLessonIds.has(l.id)).length;
+          if (completedInThisCourse === totalLessonsInCourse) {
+            completedCoursesCount++;
+          }
         }
       }
 

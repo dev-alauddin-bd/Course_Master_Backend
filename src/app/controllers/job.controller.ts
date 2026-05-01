@@ -45,7 +45,7 @@ const applyForJob = catchAsyncHandler(async (req: Request, res: Response) => {
 
 // ============================== GET Admin Applications ==============================
 const getAllApplications = catchAsyncHandler(async (req: Request, res: Response) => {
-  const result = await jobService.getAllApplications();
+  const result = await jobService.getAllApplications(req.query);
   sendResponse(res, 200, "Applications fetched successfully", result);
 });
 
