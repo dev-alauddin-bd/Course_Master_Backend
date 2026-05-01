@@ -8,13 +8,13 @@ export const userService = {
         name: true,
         email: true,
         role: true,
+        status: true,
         createdAt: true,
         _count: {
           select: { enrolledCourses: true }
         }
       },
       orderBy: { createdAt: "desc" },
-      take: 10 // Limiting for dashboard view
     });
 
     return users.map(user => ({
@@ -22,11 +22,24 @@ export const userService = {
       name: user.name,
       email: user.email,
       role: user.role,
+      status: user.status,
       joinDate: user.createdAt,
       courses: user._count.enrolledCourses,
-      // Determining simple active status (mock logic: if they have enrolled, active)
-      status: user._count.enrolledCourses > 0 ? "active" : "inactive"
     }));
+  },
+
+  async updateUserRole(userId: string, role: any) {
+    return await prisma.user.update({
+      where: { id: userId },
+      data: { role }
+    });
+  },
+
+  async updateUserStatus(userId: string, status: any) {
+    return await prisma.user.update({
+      where: { id: userId },
+      data: { status }
+    });
   },
 
   async becomeInstructor(userId: string) {
@@ -43,4 +56,3 @@ export const userService = {
     });
   }
 };
-

@@ -11,6 +11,11 @@ export enum UserRole {
   INSTRUCTOR = "instructor",
 }
 
+export enum UserStatus {
+  ACTIVE = "active",
+  BLOCKED = "blocked",
+}
+
 
 
 
@@ -28,6 +33,7 @@ export interface IUser {
   bio?: string | null;
   password: string;
   role: UserRole;
+  status: UserStatus;
   avatar?: string | null;
   enrolledCourses?: IEnrollment[];
   completedLessons?: ICompletedLesson[];

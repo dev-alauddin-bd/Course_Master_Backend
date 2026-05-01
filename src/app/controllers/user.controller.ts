@@ -10,6 +10,24 @@ const getAllUsers = catchAsyncHandler(
   }
 );
 
+const updateUserRole = catchAsyncHandler(
+    async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const { role } = req.body;
+      const user = await userService.updateUserRole(id as string, role);
+      sendResponse(res, 200, "User role updated successfully", user);
+    }
+  );
+  
+  const updateUserStatus = catchAsyncHandler(
+    async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const { status } = req.body;
+      const user = await userService.updateUserStatus(id as string, status);
+      sendResponse(res, 200, "User status updated successfully", user);
+    }
+  );
+
  const becomeInstructor = catchAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user!.id;
@@ -40,12 +58,16 @@ const updateProfile = catchAsyncHandler(
 
 export const userController: UserController = {
   getAllUsers,
+  updateUserRole,
+  updateUserStatus,
   becomeInstructor,
   updateProfile,
 };
 
 type UserController = {
   getAllUsers: RequestHandler;
+  updateUserRole: RequestHandler;
+  updateUserStatus: RequestHandler;
   becomeInstructor: RequestHandler;
   updateProfile: RequestHandler;
 }

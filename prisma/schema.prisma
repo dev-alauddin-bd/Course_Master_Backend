@@ -13,6 +13,11 @@ enum Role {
   admin
 }
 
+enum UserStatus {
+  active
+  blocked
+}
+
 enum PaymentStatus {
   PENDING
   COMPLETED
@@ -27,6 +32,7 @@ model User {
   email                 String                 @unique
   password              String
   role                  Role                   @default(student)
+  status                UserStatus             @default(active)
   avatar                String?
   enrolledCourses       Enrollment[]
   createdCourses        Course[]               @relation("InstructorCourses")
