@@ -1,26 +1,17 @@
+//  ====================
+//    Dashboard Service
+// ====================
 
 import { prisma } from "../../lib/prisma";
 import { IUser, UserRole } from "../interfaces/user.interface";
 
-/**
- * Service to aggregate analytical insights and statistics 
- * displayed in the user's personal dashboard.
- */
 export const dashboardService = {
-  /**
-   * Aggregate core statistics for the authenticated user based on their role
-   * 
-   * Provides different analytical views for Administrators (overall platform metrics) 
-   * versus Students (personal progress records).
-   * 
-   * @param user - Object representing the currently logged-in user
-   * @returns Detailed statistics tailored to the specific user role
-   */
+  // ============================== GET Dashboard Analytics ==============================
   async getDashboardAnalytics(user: IUser) {
     const role = user.role as UserRole;
     const userId = user.id;
 
-    // ------------ ADMINISTRATOR ANALYTICS OVERVIEW ------------
+    // ------------ ADMINISTRATOR ANALYTICS ------------
     if (role === UserRole.ADMIN) {
       const [totalStudents, totalInstructors, totalCourses, coursesData, totalEnrollments] = await Promise.all([
         prisma.user.count({ where: { role: UserRole.STUDENT } }),
@@ -32,10 +23,7 @@ export const dashboardService = {
         prisma.enrollment.count()
       ]);
 
-      const totalRevenue = coursesData.reduce((sum, course) => {
-        return sum + (course.price * course._count.enrolledUsers);
-      }, 0);
-
+      const totalRevenue = coursesData.reduce((sum, course) => sum + (course.price * course._count.enrolledUsers), 0);
       const engagementRate = totalStudents > 0 
         ? Math.min(Math.round((totalEnrollments / totalStudents) * 100), 100)
         : 0;
@@ -50,7 +38,7 @@ export const dashboardService = {
           totalEnrollments,
           engagementRate
         },
-        message: "Full administrative overview generated for dashboard"
+        message: "Full administrative overview generated"
       };
     }
 
@@ -66,22 +54,14 @@ export const dashboardService = {
           }
         }),
         prisma.course.count({ where: { instructorId: userId } }),
-        prisma.lesson.count({ 
-          where: { module: { course: { instructorId: userId } } } 
-        }),
-        prisma.enrollment.count({
-          where: { course: { instructorId: userId } }
-        })
+        prisma.lesson.count({ where: { module: { course: { instructorId: userId } } } }),
+        prisma.enrollment.count({ where: { course: { instructorId: userId } } })
       ]);
 
-      const myRevenue = myCourses.reduce((sum, course) => {
-        return sum + (course.price * course._count.enrolledUsers);
-      }, 0);
-
+      const myRevenue = myCourses.reduce((sum, course) => sum + (course.price * course._count.enrolledUsers), 0);
       const uniqueStudents = await prisma.user.count({
         where: { enrolledCourses: { some: { course: { instructorId: userId } } } }
       });
-
       const engagementRate = uniqueStudents > 0 
         ? Math.min(Math.round((totalEnrolledData / uniqueStudents) * 100), 100)
         : 0;
@@ -100,7 +80,7 @@ export const dashboardService = {
       };
     }
 
-    // ------------ PERSONALIZED STUDENT DASHBOARD ------------
+    // ------------ STUDENT ANALYTICS ------------
     if (role === UserRole.STUDENT) {
       const [myEnrolledCount, totalCompletedLessons, pendingAssignments] = await Promise.all([
         prisma.enrollment.count({ where: { userId } }),
@@ -109,6 +89,7 @@ export const dashboardService = {
           where: { module: { course: { enrolledUsers: { some: { userId } } } } }
         })
       ]);
+
       const myEnrollments = await prisma.enrollment.findMany({
         where: { userId },
         include: { course: { include: { modules: { include: { lessons: { select: { id: true } } } } } } }
@@ -118,10 +99,7 @@ export const dashboardService = {
       for (const enrollment of myEnrollments) {
         const totalLessonsInCourse = enrollment.course.modules.reduce((acc, m) => acc + m.lessons.length, 0);
         const completedInThisCourse = await prisma.completedLesson.count({
-          where: { 
-            userId, 
-            lesson: { module: { courseId: enrollment.courseId } } 
-          }
+          where: { userId, lesson: { module: { courseId: enrollment.courseId } } }
         });
         if (totalLessonsInCourse > 0 && completedInThisCourse === totalLessonsInCourse) {
           completedCoursesCount++;

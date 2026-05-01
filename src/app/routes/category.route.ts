@@ -1,30 +1,28 @@
 //  ====================
-//  Category Routes
+//     Category Routes
 // ====================
 
 import { Router } from "express";
 import { categoryController } from "../controllers/category.controller";
+import { protect, authorize } from "../middlewares/auth.middleware";
+import { UserRole } from "../interfaces/user.interface";
 
 const router = Router();
 
-// ==============================  Fetch all categories ==============================
-//
+// ============================== GET ALL Categories ==============================
 router.get("/", categoryController.getCategories);
 
-// ============================== Create a new category ==============================
-
-router.post("/", categoryController.createCategory);
+// ============================== CREATE Category (ADMIN) ==============================
+router.post("/", protect, authorize(UserRole.ADMIN), categoryController.createCategory);
 
 // ==============================
 // DYNAMIC ROUTES (with :id param) - must come last
 // ==============================
 
-// ==============================  Update a specific category by ID ==============================
+// ============================== UPDATE Category (ADMIN) ==============================
+router.put("/:id", protect, authorize(UserRole.ADMIN), categoryController.updateCategory);
 
-router.put("/:id", categoryController.updateCategory);
-
-// ============================== Delete a specific category by ID ==============================
-
-router.delete("/:id", categoryController.deleteCategory);
+// ============================== DELETE Category (ADMIN) ==============================
+router.delete("/:id", protect, authorize(UserRole.ADMIN), categoryController.deleteCategory);
 
 export const categoryRouter: Router = router;

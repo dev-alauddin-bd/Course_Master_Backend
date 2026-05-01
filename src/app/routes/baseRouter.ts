@@ -1,6 +1,7 @@
-// ==============================
-// BASE ROUTER
-// ==============================
+//  ====================
+//      Base Router
+// ====================
+
 import { Router } from "express";
 import { authRouter } from "./auth.route";
 import { courseRouter } from "./course.route";
@@ -14,13 +15,13 @@ import { paymentRouter } from "./payment.route";
 import { enrollRouter } from "./enroll.route";
 import { lessonRouter } from "./lesson.route";
 import { studentSubmissionRouter } from "./studentSubmission.route";
-
 import { aiRouter } from "./ai.route";
 import { liveSessionRoutes } from "./liveSession.route";
+import { jobRouter } from "./job.route";
 
 const router = Router();
 
-// ==================================== Define all main route paths and their corresponding routers==========================
+// ============================== DEFINE All Routes ==============================
 const routes = [
   { path: "/auth", handler: authRouter },          
   { path: "/courses", handler: courseRouter },     
@@ -32,19 +33,16 @@ const routes = [
   { path: "/reviews", handler: reviewRoutes },     
   { path: "/ai", handler: aiRouter },           
   { path: "/live-sessions", handler: liveSessionRoutes },
-
-
+  { path: "/jobs", handler: jobRouter },
   { path: "/dashboard", handler: dashboardRouter },
   { path: "/users", handler: userRouter },
   { path: "/submissions", handler: studentSubmissionRouter },
   { path: "/payments", handler: paymentRouter },
-
 ];
 
-// ===================================== Attach each router to its path============================================
+// ============================== ATTACH Routers ==============================
 routes.forEach((route) => {
   router.use(route.path, route.handler);
 });
 
-
-export const baseRouter : Router= router;
+export const baseRouter: Router = router;

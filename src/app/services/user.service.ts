@@ -1,6 +1,11 @@
+//  ====================
+//      User Service
+// ====================
+
 import { prisma } from "../../lib/prisma";
 
 export const userService = {
+  // ============================== GET ALL Users ==============================
   async getAllUsers(requester: any) {
     const whereCondition = requester.role === 'instructor' 
       ? { enrolledCourses: { some: { course: { instructorId: requester.id } } } }
@@ -33,6 +38,7 @@ export const userService = {
     }));
   },
 
+  // ============================== UPDATE User Role ==============================
   async updateUserRole(userId: string, role: any) {
     return await prisma.user.update({
       where: { id: userId },
@@ -40,6 +46,7 @@ export const userService = {
     });
   },
 
+  // ============================== UPDATE User Status ==============================
   async updateUserStatus(userId: string, status: any) {
     return await prisma.user.update({
       where: { id: userId },
@@ -47,6 +54,7 @@ export const userService = {
     });
   },
 
+  // ============================== BECOME Instructor ==============================
   async becomeInstructor(userId: string) {
     return await prisma.user.update({
       where: { id: userId },
@@ -54,6 +62,7 @@ export const userService = {
     });
   },
 
+  // ============================== UPDATE Profile ==============================
   async updateProfile(userId: string, data: { name?: string; avatar?: string }) {
     return await prisma.user.update({
       where: { id: userId },

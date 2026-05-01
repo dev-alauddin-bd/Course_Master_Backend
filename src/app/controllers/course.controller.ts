@@ -1,12 +1,14 @@
+//  ====================
+//     Course Controller
+// ====================
+
 import { Request, RequestHandler, Response } from "express";
 import { courseService } from "../services/course.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
 import logger from "../../lib/logger";
 
-// ==============================
-// CREATE a course
-// ==============================
+// ============================== CREATE Course ==============================
 const createCourse = catchAsyncHandler(async (req: Request, res: Response) => {
   logger.info("Received course creation request with data:", req.body);
   const instructorId = req.user!.id;
@@ -14,10 +16,7 @@ const createCourse = catchAsyncHandler(async (req: Request, res: Response) => {
   sendResponse(res, 201, "Course created successfully", course);
 });
 
-
-// ==============================
-// GET all courses with advanced features
-// ==============================
+// ============================== GET ALL Courses ==============================
 const getAllCourses = catchAsyncHandler(async (req: Request, res: Response) => {
   const { page, limit, search, category, sort, instructorId } = req.query;
 
@@ -29,25 +28,19 @@ const getAllCourses = catchAsyncHandler(async (req: Request, res: Response) => {
     sort: sort?.toString(),
     instructorId: instructorId?.toString(),
   });
+  
   logger.debug("Fetched courses with query:", { query: req.query, count: Array.isArray(courses) ? courses.length : "N/A" });
-
   sendResponse(res, 200, "Courses fetched successfully", courses);
 });
 
-
-// ==============================
-// GET course by ID
-// ==============================
+// ============================== GET Course By ID ==============================
 const getCourseById = catchAsyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
   const course = await courseService.getCourseById(req.params.id as string, userId);
   sendResponse(res, 200, "Course fetched successfully", course);
 });
 
-
-/**
- * Mark a specific course lesson as completed for the current student
- */
+// ============================== MARK Lesson Completed ==============================
 const completeLesson = catchAsyncHandler(async (req: Request, res: Response) => {
   const { courseId, lessonId } = req.body;
   const userId = req.user!.id;
@@ -56,48 +49,32 @@ const completeLesson = catchAsyncHandler(async (req: Request, res: Response) => 
   sendResponse(res, 200, "Progress tracked: Lesson marked as completed");
 });
 
+// ============================== GET Recommendations ==============================
+const getRecommendations = catchAsyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  const recommendations = await courseService.getRecommendations(userId as string);
+  sendResponse(res, 200, "Recommended courses fetched successfully", recommendations);
+});
 
-// =============================== recomendayions =========================
-
-const getRecommendations = async (req: Request, res: Response) => {
-  try {
-    const userId = req.user?.id;
-    const recommendations = await courseService.getRecommendations(userId as string);
-    res.json({ success: true, data: recommendations });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-
-
-// ==============================
-// UPDATE a course
-// ==============================
+// ============================== UPDATE Course ==============================
 const updateCourse = catchAsyncHandler(async (req: Request, res: Response) => {
   const course = await courseService.updateCourse(req.params.id as string, req.body);
   sendResponse(res, 200, "Course updated successfully", course);
 });
 
-// ==============================
-// DELETE a course
-// ==============================
+// ============================== DELETE Course ==============================
 const deleteCourse = catchAsyncHandler(async (req: Request, res: Response) => {
   const result = await courseService.deleteCourse(req.params.id as string);
   sendResponse(res, 200, result.message);
 });
 
-// ==============================
-// TOGGLE PUBLISH status
-// ==============================
+// ============================== TOGGLE Publish Status ==============================
 const togglePublish = catchAsyncHandler(async (req: Request, res: Response) => {
   const course = await courseService.togglePublish(req.params.id as string);
   sendResponse(res, 200, "Course visibility updated", course);
 });
 
-/**
- * Retrieve all courses the current user is enrolled in
- */
+// ============================== GET My Enrolled Courses ==============================
 const getMyCourses = catchAsyncHandler(async (req: Request, res: Response) => {
   const userId = req.user!.id;
   const courses = await courseService.getMyCourses(userId);

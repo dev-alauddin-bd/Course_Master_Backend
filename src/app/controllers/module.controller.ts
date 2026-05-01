@@ -1,34 +1,34 @@
+//  ====================
+//    Module Controller
+// ====================
+
 import { Request, RequestHandler, Response } from "express";
 import { moduleService } from "../services/module.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
 
-// ==============================
-// MODULE CONTROLLERS
-// ==============================
-
-// Add a new module to a course
+// ============================== ADD Module ==============================
 const addModule = catchAsyncHandler(async (req: Request, res: Response) => {
   const { courseId, title } = req.body;
   const module = await moduleService.addModule(courseId, { title });
   sendResponse(res, 201, "Module added successfully", module);
 });
 
-// Update an existing module
+// ============================== UPDATE Module ==============================
 const updateModule = catchAsyncHandler(async (req: Request, res: Response) => {
   const { moduleId } = req.params;
   const module = await moduleService.updateModule(moduleId as string, req.body);
   sendResponse(res, 200, "Module updated successfully", module);
 });
 
-// Delete a module
+// ============================== DELETE Module ==============================
 const deleteModule = catchAsyncHandler(async (req: Request, res: Response) => {
   const { moduleId } = req.params;
   await moduleService.deleteModule(moduleId as string);
-  sendResponse(res, 200, "Module deleted successfully", null);
+  sendResponse(res, 200, "Module deleted successfully");
 });
 
-// Get all modules of a course (student view)
+// ============================== GET Modules By Course ID ==============================
 const getModuleByCourseId = catchAsyncHandler(async (req: Request, res: Response) => {
   const { courseId } = req.params;
   const studentId = req.user?.id;
@@ -36,17 +36,14 @@ const getModuleByCourseId = catchAsyncHandler(async (req: Request, res: Response
   sendResponse(res, 200, "Modules fetched successfully", modules);
 });
 
-// Get all modules (admin/general view)
+// ============================== GET ALL Modules ==============================
 const getAllModules = catchAsyncHandler(async (req: Request, res: Response) => {
   const { courseId } = req.params;
   const modules = await moduleService.getAllModules(courseId as string);
   sendResponse(res, 200, "All modules fetched successfully", modules);
 });
 
-// ==============================
-// EXPORT CONTROLLER
-// ==============================
-export const moduleController : ModuleController = {
+export const moduleController: ModuleController = {
   addModule,
   updateModule,
   deleteModule,

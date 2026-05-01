@@ -1,5 +1,5 @@
 //  ====================
-//  Auth Routes
+//      Auth Routes
 // ====================
 
 import { Router } from "express";
@@ -7,19 +7,16 @@ import { authControllers } from "../controllers/auth.controller";
 
 const router = Router();
 
-// ============================== signup  ==============================
-
+// ============================== SIGNUP ==============================
 router.post("/signup", authControllers.signup);
 
-// ============================== login  ==============================
-
+// ============================== LOGIN ==============================
 router.post("/login", authControllers.login);
 
-// =============================Sync Firebase user ==============================
+// ============================== SYNC Firebase ==============================
 router.post("/sync-firebase", authControllers.syncFirebase);
 
-// ============================== Refresh the access token using the refresh token ==============================
-
+// ============================== REFRESH Token ==============================
 router.get("/refresh-token", authControllers.refreshToken);
 
-export const authRouter : Router= router;
+export const authRouter: Router = router;

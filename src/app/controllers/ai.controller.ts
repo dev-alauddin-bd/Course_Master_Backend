@@ -1,12 +1,17 @@
-import { Request, Response } from "express";
+//  ====================
+//      AI Controller
+// ====================
+
+import { Request, RequestHandler, Response } from "express";
 import { AiService } from "../services/ai.service";
+import { catchAsyncHandler } from "../utils/catchAsyncHandler";
+import { sendResponse } from "../utils/sendResponse";
 
-
-// ===================================== Chat Assistant ============================
+// ============================== CHAT Assistant (SSE) ==============================
 const chatAssistant = async (req: Request, res: Response) => {
   try {
     const { message, history } = req.body;
-    
+
     // Set headers for SSE
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
@@ -27,22 +32,20 @@ const chatAssistant = async (req: Request, res: Response) => {
   }
 };
 
+// ============================== GENERATE Quiz ==============================
+const generateQuiz = catchAsyncHandler(async (req: Request, res: Response) => {
+  const { lessonId } = req.params;
+  const quiz = await AiService.generateQuiz(lessonId as string);
+  sendResponse(res, 200, "Quiz generated successfully", quiz);
+});
 
-// =================================================== Generate Quiz =====================================
-const generateQuiz = async (req: Request, res: Response) => {
-  try {
-    const { lessonId } = req.params;
-    const quiz = await AiService.generateQuiz(lessonId as string);
-    res.json({ success: true, data: quiz });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
-  }
+export const AiController: AIController = {
+  chatAssistant,
+  generateQuiz,
 };
 
 
-export const AiController = {
-  chatAssistant,
-  generateQuiz,
-
-
+type AIController = {
+  chatAssistant: RequestHandler;
+  generateQuiz: RequestHandler;
 };

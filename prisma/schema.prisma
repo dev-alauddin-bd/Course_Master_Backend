@@ -268,3 +268,38 @@ model LiveRegistration {
   @@unique([email, sessionId]) 
   @@map("live_registrations")
 }
+
+// ---------------- JOB ----------------
+model Job {
+  id           String           @id @default(uuid())
+  title        String
+  category     String
+  location     String
+  type         String // Full-time, Contract, etc.
+  salary       String
+  description  String
+  deadline     DateTime?
+  isPublished  Boolean          @default(true)
+  applications JobApplication[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@map("jobs")
+}
+
+// ---------------- JOB APPLICATION ----------------
+model JobApplication {
+  id          String   @id @default(uuid())
+  fullName    String
+  email       String
+  resumeLink  String // URL to uploaded resume
+  coverLetter String?  @db.Text
+  status      String   @default("pending") // pending, reviewed, rejected, hired
+  
+  job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobId       String
+
+  appliedAt   DateTime @default(now())
+
+  @@map("job_applications")
+}

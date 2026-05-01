@@ -1,14 +1,21 @@
+//  ====================
+//     Review Routes
+// ====================
+
 import { Router } from "express";
 import { reviewController } from "../controllers/review.controller";
 import { protect, authorize } from "../middlewares/auth.middleware";
 import { UserRole } from "../interfaces/user.interface";
 
 const router = Router();
-// ============================================  Get reviews (public) ===========================================
+
+// ============================== GET ALL Reviews ==============================
 router.get("/", reviewController.getAllReviews);
-//  =========================================== Create Review (Student only) ============================================
+
+// ============================== CREATE Review (STUDENT) ==============================
 router.post("/", protect, authorize(UserRole.STUDENT), reviewController.createReview);
-//  ============================================ Delete Review (Student, Instructor & Admin) ============================================
+
+// ============================== DELETE Review ==============================
 router.delete("/:id", protect, authorize(UserRole.STUDENT, UserRole.INSTRUCTOR, UserRole.ADMIN), reviewController.deleteReview);
 
 export const reviewRoutes: Router = router;

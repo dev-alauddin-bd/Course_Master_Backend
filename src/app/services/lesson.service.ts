@@ -1,110 +1,92 @@
+//  ====================
+//     Lesson Service
+// ====================
+
 import { prisma } from "../../lib/prisma";
 import { CustomAppError } from "../errors/customError";
 import logger from "../../lib/logger";
 
-/**
- * Fetch all lessons within a specific module or globally
- * Sorted by their logical order in the curriculum.
- */
-const getAllLessons = async (moduleId?: string) => {
-  return await prisma.lesson.findMany({
-    where: moduleId ? { moduleId } : {},
-    include: {
-      module: { 
-        select: { 
-          title: true,
-          course: { select: { title: true } }
-        } 
-      }
-    },
-    orderBy: { order: "asc" },
-  });
-};
-
-/**
- * Fetch a single lesson by ID
- */
-const getLessonById = async (lessonId: string) => {
-  const lesson = await prisma.lesson.findUnique({
-    where: { id: lessonId },
-    include: {
-      module: {
-          select: {
-              title: true,
-              course: { select: { title: true } }
-          }
-      }
-    },
-  });
-
-  if (!lesson) throw new CustomAppError(404, "Lesson not found");
-  return lesson;
-};
-
-/**
- * Attach a new instructional lesson to a module
- * 
- * @param payload - Lesson details and parent module ID
- * @returns The newly created lesson record
- */
-const addLesson = async (payload: {
-  moduleId: string;
-  title: string;
-  videoUrl: string;
-  duration: number;
-}) => {
-  logger.info("Adding lesson with payload:", payload);
-  // Ensure the module exists
-  const mod = await prisma.module.findUnique({ where: { id: payload.moduleId } });
-  if (!mod) throw new CustomAppError(404, "Parent module not found for lesson attachment");
-
-  // Calculate next sequential position
-  const lastLesson = await prisma.lesson.findFirst({
-    where: { moduleId: payload.moduleId },
-    orderBy: { order: 'desc' }
-  });
-  const nextOrder = lastLesson ? lastLesson.order + 1 : 0;
-
-  return await prisma.lesson.create({
-    data: {
-      title: payload.title,
-      videoUrl: payload.videoUrl,
-      duration: payload.duration,
-      moduleId: payload.moduleId,
-      order: nextOrder
-    }
-  });
-};
-
-/**
- * Update an existing lesson
- */
-const updateLesson = async (lessonId: string, payload: Partial<{ title: string; videoUrl: string; duration: number }>) => {
-  const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
-  if (!lesson) throw new CustomAppError(404, "Lesson not found for update");
-  
-  return await prisma.lesson.update({
-    where: { id: lessonId },
-    data: payload
-  });
-};
-
-/**
- * Delete a lesson
- */
-const deleteLesson = async (lessonId: string) => {
-  const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
-  if (!lesson) throw new CustomAppError(404, "Lesson not found for deletion");
-
-  return await prisma.lesson.delete({
-    where: { id: lessonId }
-  });
-};
-
 export const lessonService = {
-  addLesson,
-  updateLesson,
-  deleteLesson,
-  getAllLessons,
-  getLessonById,
+  // ============================== GET ALL Lessons ==============================
+  async getAllLessons(moduleId?: string) {
+    return await prisma.lesson.findMany({
+      where: moduleId ? { moduleId } : {},
+      include: {
+        module: { 
+          select: { 
+            title: true,
+            course: { select: { title: true } }
+          } 
+        }
+      },
+      orderBy: { order: "asc" },
+    });
+  },
+
+  // ============================== GET Lesson By ID ==============================
+  async getLessonById(lessonId: string) {
+    const lesson = await prisma.lesson.findUnique({
+      where: { id: lessonId },
+      include: {
+        module: {
+          select: {
+            title: true,
+            course: { select: { title: true } }
+          }
+        }
+      },
+    });
+
+    if (!lesson) throw new CustomAppError(404, "Lesson not found");
+    return lesson;
+  },
+
+  // ============================== ADD Lesson ==============================
+  async addLesson(payload: {
+    moduleId: string;
+    title: string;
+    videoUrl: string;
+    duration: number;
+  }) {
+    logger.info("Adding lesson with payload:", payload);
+    const mod = await prisma.module.findUnique({ where: { id: payload.moduleId } });
+    if (!mod) throw new CustomAppError(404, "Parent module not found for lesson attachment");
+
+    const lastLesson = await prisma.lesson.findFirst({
+      where: { moduleId: payload.moduleId },
+      orderBy: { order: 'desc' }
+    });
+    const nextOrder = lastLesson ? lastLesson.order + 1 : 0;
+
+    return await prisma.lesson.create({
+      data: {
+        title: payload.title,
+        videoUrl: payload.videoUrl,
+        duration: payload.duration,
+        moduleId: payload.moduleId,
+        order: nextOrder
+      }
+    });
+  },
+
+  // ============================== UPDATE Lesson ==============================
+  async updateLesson(lessonId: string, payload: Partial<{ title: string; videoUrl: string; duration: number }>) {
+    const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
+    if (!lesson) throw new CustomAppError(404, "Lesson not found for update");
+    
+    return await prisma.lesson.update({
+      where: { id: lessonId },
+      data: payload
+    });
+  },
+
+  // ============================== DELETE Lesson ==============================
+  async deleteLesson(lessonId: string) {
+    const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
+    if (!lesson) throw new CustomAppError(404, "Lesson not found for deletion");
+
+    return await prisma.lesson.delete({
+      where: { id: lessonId }
+    });
+  },
 };

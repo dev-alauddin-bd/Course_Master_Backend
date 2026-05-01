@@ -1,46 +1,43 @@
-// ======================
-//  Course Routes 
-// ======================
+//  ====================
+//     Course Routes
+// ====================
 
 import { Router } from "express";
 import { courseController } from "../controllers/course.controller";
 import { authorize, protect, optionalProtect } from "../middlewares/auth.middleware";
+import { UserRole } from "../interfaces/user.interface";
 
 const router = Router();
 
-// ==============================  CREATE a course (Instructior only) ==============================
+// ============================== CREATE Course (INSTRUCTOR) ==============================
+router.post("/", protect, authorize(UserRole.INSTRUCTOR), courseController.createCourse);
 
-router.post("/", protect, authorize("instructor"), courseController.createCourse);
-
-
-// ============================== GET all courses (Public) ==============================
+// ============================== GET ALL Courses (PUBLIC) ==============================
 router.get("/", courseController.getAllCourses);
 
-
-// ================================== Get courses the current user is enrolled in ==========================
+// ============================== GET My Enrolled Courses ==============================
 router.get("/my-courses", protect, courseController.getMyCourses);
 
-// ===================================== Mark a lesson as completed ======================================
+// ============================== MARK Lesson Completed ==============================
 router.post("/complete-lesson", protect, courseController.completeLesson);
 
-//  ======================================== recomendations Courses ================================
+// ============================== GET Recommendations ==============================
 router.get("/recommendations", protect, courseController.getRecommendations);
 
 // ==============================
 // DYNAMIC ROUTES (with :id param) - must come last
 // ==============================
 
-// =========================================Get course by ID===========================================
+// ============================== GET Course By ID ==============================
 router.get("/:id", optionalProtect, courseController.getCourseById);
 
-// =================================================Update a course by ID================================
-router.put("/:id", protect, authorize("admin", "instructor"), courseController.updateCourse);
+// ============================== UPDATE Course ==============================
+router.put("/:id", protect, authorize(UserRole.ADMIN, UserRole.INSTRUCTOR), courseController.updateCourse);
 
-// ======================================Toggle course publish status======================================
-router.patch("/:id/toggle-publish", protect, authorize("admin", "instructor"), courseController.togglePublish);
+// ============================== TOGGLE Publish Status ==============================
+router.patch("/:id/toggle-publish", protect, authorize(UserRole.ADMIN, UserRole.INSTRUCTOR), courseController.togglePublish);
 
-// ========================================Delete a course by ID (Admin only)===================================
-router.delete("/:id", protect, authorize("admin"), courseController.deleteCourse);
-
+// ============================== DELETE Course (ADMIN) ==============================
+router.delete("/:id", protect, authorize(UserRole.ADMIN), courseController.deleteCourse);
 
 export const courseRouter: Router = router;
