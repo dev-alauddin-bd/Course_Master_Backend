@@ -1,8 +1,13 @@
 import { prisma } from "../../lib/prisma";
 
 export const userService = {
-  async getAllUsers() {
+  async getAllUsers(requester: any) {
+    const whereCondition = requester.role === 'instructor' 
+      ? { enrolledCourses: { some: { course: { instructorId: requester.id } } } }
+      : {};
+
     const users = await prisma.user.findMany({
+      where: whereCondition,
       select: {
         id: true,
         name: true,

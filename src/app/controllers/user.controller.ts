@@ -2,10 +2,11 @@ import { Request, RequestHandler, Response } from "express";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
 import { userService } from "../services/user.service";
+import { IUser } from "../interfaces/user.interface";
 
 const getAllUsers = catchAsyncHandler(
   async (req: Request, res: Response) => {
-    const users = await userService.getAllUsers();
+    const users = await userService.getAllUsers(req.user as IUser);
     sendResponse(res, 200, "Users retrieved successfully", users);
   }
 );

@@ -82,6 +82,10 @@ export const dashboardService = {
         where: { enrolledCourses: { some: { course: { instructorId: userId } } } }
       });
 
+      const engagementRate = uniqueStudents > 0 
+        ? Math.min(Math.round((totalEnrolledData / uniqueStudents) * 100), 100)
+        : 0;
+
       return {
         role,
         statistics: {
@@ -89,7 +93,8 @@ export const dashboardService = {
           totalStudents: uniqueStudents,
           totalEnrollments: totalEnrolledData,
           totalRevenue: myRevenue,
-          totalLessons: totalLessons
+          totalLessons: totalLessons,
+          engagementRate
         },
         message: "Instructor performance overview ready"
       };

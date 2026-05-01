@@ -20,4 +20,4 @@ router.post("/become-instructor", protect, authorize(UserRole.STUDENT, UserRole.
 // ============================================= Update profile (ALL PROTECTED USERS) ============================================
 router.patch("/profile", protect, upload.single("avatar"), userController.updateProfile);
 
-export const userRouter : Router= router;
+export const userRouter: Router = router;
