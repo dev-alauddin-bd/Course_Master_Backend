@@ -22,6 +22,9 @@ router.post("/", protect, authorize(UserRole.ADMIN), jobController.createJob);
 // DYNAMIC ROUTES (with :id param) - must come last
 // ==============================
 
+// ============================== GET Admin Applications ==============================
+router.get("/admin/applications", protect, authorize(UserRole.ADMIN), jobController.getAllApplications);
+
 // ============================== GET Single Job ==============================
 router.get("/:id", jobController.getJobById);
 
@@ -30,8 +33,5 @@ router.patch("/:id", protect, authorize(UserRole.ADMIN), jobController.updateJob
 
 // ============================== DELETE Job (ADMIN) ==============================
 router.delete("/:id", protect, authorize(UserRole.ADMIN), jobController.deleteJob);
-
-// ============================== GET Admin Applications ==============================
-router.get("/admin/applications", protect, authorize(UserRole.ADMIN), jobController.getAllApplications);
 
 export const jobRouter: Router = router;

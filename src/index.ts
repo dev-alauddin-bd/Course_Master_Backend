@@ -17,14 +17,14 @@ app.set("trust proxy", 1);
 // ==============================
 // WHITELIST (for k6 / testing)
 // ==============================
-const whitelist = ["103.197.250.67"]; // তোমার IP
+const whitelist = ["103.197.250.67"];
 
 // ==============================
 // RATE LIMITER
 // ==============================
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 min
-  max: 100, // 100 requests per IP
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: {
     success: false,
     message: "Too many requests, try later.",

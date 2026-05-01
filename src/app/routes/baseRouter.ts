@@ -23,15 +23,15 @@ const router = Router();
 
 // ============================== DEFINE All Routes ==============================
 const routes = [
-  { path: "/auth", handler: authRouter },          
-  { path: "/courses", handler: courseRouter },     
+  { path: "/auth", handler: authRouter },
+  { path: "/courses", handler: courseRouter },
   { path: "/categories", handler: categoryRouter },
-  { path: "/modules", handler: moduleRouter },     
-  { path: "/lessons", handler: lessonRouter },    
+  { path: "/modules", handler: moduleRouter },
+  { path: "/lessons", handler: lessonRouter },
   { path: "/enrollments", handler: enrollRouter },
   { path: "/assignments", handler: assignmentRouter },
-  { path: "/reviews", handler: reviewRoutes },     
-  { path: "/ai", handler: aiRouter },           
+  { path: "/reviews", handler: reviewRoutes },
+  { path: "/ai", handler: aiRouter },
   { path: "/live-sessions", handler: liveSessionRoutes },
   { path: "/jobs", handler: jobRouter },
   { path: "/dashboard", handler: dashboardRouter },
