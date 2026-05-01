@@ -37,4 +37,4 @@ jobs:
         run: railway up --service Course_Master_Backend --detach
         env:
           # Authenticates the runner using your stored Railway Project Token
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_SECRET }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
