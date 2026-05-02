@@ -25,7 +25,9 @@ const createReview = catchAsyncHandler(async (req: Request, res: Response) => {
       message: "⭐ A new review has been submitted!", 
       type: "success" 
     });
-  } catch (err) {}
+  } catch (_err) {
+    // Socket emit failed, ignore for now
+  }
 
   sendResponse(res, 201, "Review submitted successfully", result);
 });

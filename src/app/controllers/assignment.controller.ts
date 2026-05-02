@@ -17,7 +17,9 @@ const createAssignment = catchAsyncHandler(async (req: Request, res: Response) =
       message: "📚 A new assignment has been posted!", 
       type: "success" 
     });
-  } catch (err) {}
+  } catch (_err) {
+    // Socket emit failed, ignore for now
+  }
 
   sendResponse(res, 201, "Assignment created successfully", assignment);
 });

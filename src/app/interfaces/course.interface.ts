@@ -2,7 +2,7 @@
 
 
 import { ICategory } from "./category.interface";
-import { IUser, SubmissionType } from "./user.interface";
+import { IUser } from "./user.interface";
 
 export interface ICourse {
   id: string;

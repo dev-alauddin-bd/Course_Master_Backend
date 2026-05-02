@@ -6,6 +6,8 @@ import { ICourse } from "../interfaces/course.interface";
 import { CustomAppError } from "../errors/customError";
 import { prisma } from "../../lib/prisma";
 import redis from "../../lib/redis";
+import logger from "../../lib/logger";
+import { Prisma } from "@prisma/client";
 
 // ============================== CREATE Course ==============================
 const createCourse = async (payload: ICourse) => {
@@ -29,33 +31,33 @@ const createCourse = async (payload: ICourse) => {
         previewVideo,
         price,
         thumbnail,
-      } as any,
+      },
     });
-  } catch (error: any) {
-    console.error("❌ Error creating course:", error.message);
-    throw new Error("Course creation failed");
+  } catch (error) {
+    logger.error("❌ Error creating course:", error);
+    throw new CustomAppError(500, "Course creation failed");
   }
 };
 
 // ============================== GET ALL Courses ==============================
-const getAllCourses = async (query: any) => {
-  const page = Number(query.page) || 1;
-  const limit = Number(query.limit) || 10;
+const getAllCourses = async (query: Record<string, unknown>) => {
+  const page = Number(query.page as string) || 1;
+  const limit = Number(query.limit as string) || 10;
   const skip = (page - 1) * limit;
 
   // Check cache first
-  const cacheKey = `courses:${page}:${limit}:${query.search}:${query.category}:${query.sort}`;
+  const cacheKey = `courses:${page}:${limit}:${query.search as string}:${query.category as string}:${query.sort as string}`;
   const cachedData = await redis.get(cacheKey);
   
   if (cachedData) {
     return JSON.parse(cachedData);
   }
 
-  const where: any = {};
+  const where: Record<string, unknown> = {};
 
   // Filter By Publish Status
   if (query.instructorId && query.instructorId !== 'undefined') {
-    where.instructorId = query.instructorId;
+    where.instructorId = query.instructorId as string;
   } else if (query.showAll === 'true') {
     // Admin or specific view: show everything
   } else {
@@ -66,23 +68,23 @@ const getAllCourses = async (query: any) => {
   // Optimized Search
   if (query.search) {
     where.OR = [
-      { title: { contains: query.search, mode: "insensitive" } },
-      { description: { contains: query.search, mode: "insensitive" } },
+      { title: { contains: query.search as string, mode: "insensitive" } },
+      { description: { contains: query.search as string, mode: "insensitive" } },
     ];
   }
 
   // Category Filter
   if (query.category) {
-    where.categoryId = query.category;
+    where.categoryId = query.category as string;
   }
 
   // Sort Logic
-  let orderBy: any = { createdAt: "desc" };
+  let orderBy: Record<string, unknown> = { createdAt: "desc" };
   if (query.sort) {
     if (query.sort === "newest") {
       orderBy = { createdAt: "desc" };
     } else {
-      const [field, order] = query.sort.split(":");
+      const [field, order] = (query.sort as string).split(":");
       const allowedFields = ["price", "createdAt", "title"];
       if (allowedFields.includes(field)) {
         orderBy = { [field]: order === "desc" ? "desc" : "asc" };
@@ -93,8 +95,8 @@ const getAllCourses = async (query: any) => {
   // Database Query (Optimized Select)
   const [courses, total] = await Promise.all([
     prisma.course.findMany({
-      where,
-      orderBy,
+      where: where as Prisma.CourseWhereInput,
+      orderBy: orderBy as Prisma.CourseOrderByWithRelationInput,
       skip,
       take: limit,
       select: {
@@ -193,7 +195,7 @@ const updateCourse = async (id: string, payload: Partial<ICourse>) => {
 
   return await prisma.course.update({
     where: { id },
-    data: payload as any,
+    data: payload as unknown as Prisma.CourseUpdateInput,
     select: {
       id: true,
       title: true,
@@ -215,7 +217,7 @@ const togglePublish = async (id: string) => {
 
   const result = await prisma.course.update({
     where: { id },
-    data: { isPublished: !existing.isPublished } as any,
+    data: { isPublished: !existing.isPublished },
   });
 
   await redis.del(`courses:${id}`);
@@ -257,9 +259,9 @@ const completeLesson = async (userId: string, courseId: string, lessonId: string
 };
 
 // ============================== GET My Enrolled Courses ==============================
-const getMyCourses = async (userId: string, query: any = {}) => {
-  const page = Number(query.page) || 1;
-  const limit = Number(query.limit) || 10;
+const getMyCourses = async (userId: string, query: Record<string, unknown> = {}) => {
+  const page = Number(query.page as string) || 1;
+  const limit = Number(query.limit as string) || 10;
   const skip = (page - 1) * limit;
 
   const [enrollments, total] = await Promise.all([
@@ -374,7 +376,7 @@ const getRecommendations = async (userId: string) => {
       }
     });
   } catch (error) {
-    console.error("Recommendation Error:", error);
+    logger.error("Recommendation Error:", error);
     throw error;
   }
 };

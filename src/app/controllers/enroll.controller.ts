@@ -20,7 +20,7 @@ const enrollCourse = catchAsyncHandler(async (req: Request, res: Response) => {
       message: "Someone just enrolled in a course!", 
       type: "success" 
     });
-  } catch (err) {
+  } catch (_err) {
     // ignore if socket is not ready
   }
 

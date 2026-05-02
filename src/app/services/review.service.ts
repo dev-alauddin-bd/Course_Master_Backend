@@ -3,75 +3,81 @@
 // ====================
 
 import { prisma } from "../../lib/prisma";
+import { CustomAppError } from "../errors/customError";
 
-export const reviewService = {
-  // ============================== CREATE Review ==============================
-  async createReview(payload: { content: string; rating: number; userId: string; courseId: string }) {
-    const { userId, courseId } = payload;
+// ============================== CREATE Review ==============================
+const createReview = async (payload: { content: string; rating: number; userId: string; courseId: string }) => {
+  const { userId, courseId } = payload;
 
-    const enrollment = await prisma.enrollment.findUnique({
-      where: { userId_courseId: { userId, courseId } }
-    });
+  const enrollment = await prisma.enrollment.findUnique({
+    where: { userId_courseId: { userId, courseId } }
+  });
 
-    if (!enrollment) {
-      throw new Error("You must be enrolled in this course to leave a review.");
+  if (!enrollment) {
+    throw new CustomAppError(403, "You must be enrolled in this course to leave a review.");
+  }
+
+  const existingReview = await prisma.review.findFirst({
+    where: { userId, courseId }
+  });
+
+  if (existingReview) {
+    throw new CustomAppError(400, "You have already reviewed this course.");
+  }
+
+  return await prisma.review.create({
+    data: payload,
+    select: {
+      id: true,
+      content: true,
+      rating: true,
+      createdAt: true,
+      user: { select: { name: true, avatar: true, role: true } }
     }
+  });
+};
 
-    const existingReview = await prisma.review.findFirst({
-      where: { userId, courseId }
-    });
+// ============================== GET ALL Reviews ==============================
+const getAllReviews = async (query: Record<string, unknown> = {}) => {
+  const page = Number(query.page as string) || 1;
+  const limit = Number(query.limit as string) || 10;
+  const skip = (page - 1) * limit;
 
-    if (existingReview) {
-      throw new Error("You have already reviewed this course.");
-    }
-
-    return await prisma.review.create({
-      data: payload,
+  const [reviews, total] = await Promise.all([
+    prisma.review.findMany({
       select: {
         id: true,
         content: true,
         rating: true,
         createdAt: true,
         user: { select: { name: true, avatar: true, role: true } }
-      }
-    });
-  },
+      },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
+    }),
+    prisma.review.count()
+  ]);
 
-  async getAllReviews(query: any = {}) {
-    const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
-    const skip = (page - 1) * limit;
+  return {
+    reviews,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit)
+  };
+};
 
-    const [reviews, total] = await Promise.all([
-      prisma.review.findMany({
-        select: {
-          id: true,
-          content: true,
-          rating: true,
-          createdAt: true,
-          user: { select: { name: true, avatar: true, role: true } }
-        },
-        orderBy: { createdAt: "desc" },
-        skip,
-        take: limit,
-      }),
-      prisma.review.count()
-    ]);
+// ============================== DELETE Review ==============================
+const deleteReview = async (id: string, userId: string) => {
+  const review = await prisma.review.findUnique({ where: { id } });
+  if (!review) throw new CustomAppError(404, "Review not found");
+  if (review.userId !== userId) throw new CustomAppError(403, "Unauthorized");
 
-    return {
-      reviews,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit)
-    };
-  },
+  return await prisma.review.delete({ where: { id } });
+};
 
-  // ============================== DELETE Review ==============================
-  async deleteReview(id: string, userId: string) {
-    const review = await prisma.review.findUnique({ where: { id } });
-    if (!review) throw new Error("Review not found");
-    if (review.userId !== userId) throw new Error("Unauthorized");
-
-    return await prisma.review.delete({ where: { id } });
-  },
+export const reviewService = {
+  createReview,
+  getAllReviews,
+  deleteReview
 };

@@ -6,6 +6,8 @@ import { Request, Response } from "express";
 import { stripe } from "../../lib/stripe";
 import { prisma } from "../../lib/prisma";
 import logger from "../../lib/logger";
+import { getIO } from "../../lib/socket";
+
 
 // ============================== STRIPE Webhook ==============================
 export const stripeWebhook = async (req: Request, res: Response) => {
@@ -24,14 +26,20 @@ export const stripeWebhook = async (req: Request, res: Response) => {
       sig as string,
       process.env.STRIPE_WEBHOOK_SECRET as string
     );
-  } catch (err: any) {
-    logger.error("❌ Webhook signature verification failed", { error: err.message });
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : "Unknown error";
+    logger.error("❌ Webhook signature verification failed", { error: errorMessage });
+    return res.status(400).send(`Webhook Error: ${errorMessage}`);
   }
 
   // Handle specific event types
   if (event.type === "checkout.session.completed") {
-    const session = event.data.object as any;
+    interface StripeSession {
+      id: string;
+      payment_intent: string | null;
+      metadata: Record<string, string | undefined> | null;
+    }
+    const session = event.data.object as unknown as StripeSession;
     const userId = session.metadata?.userId;
     const courseId = session.metadata?.courseId;
 
@@ -47,7 +55,7 @@ export const stripeWebhook = async (req: Request, res: Response) => {
           where: { stripeSessionId: session.id },
           data: {
             status: "COMPLETED",
-            stripePaymentId: session.payment_intent,
+            stripePaymentId: session.payment_intent as string,
           },
         });
 
@@ -61,12 +69,13 @@ export const stripeWebhook = async (req: Request, res: Response) => {
       logger.info("✅ Payment and Enrollment processed successfully");
       
       try {
-        const { getIO } = require("../../lib/socket");
         getIO().emit("new_notification", { 
           message: "💰 A new payment and course enrollment just completed successfully!", 
           type: "success" 
         });
-      } catch (err) {}
+      } catch (_err) {
+        // Socket emit failed, ignore
+      }
     } catch (err) {
       logger.error("❌ Webhook Database Transaction Error:", err);
     }

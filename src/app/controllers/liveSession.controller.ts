@@ -17,7 +17,9 @@ const registerForSession = catchAsyncHandler(async (req: Request, res: Response)
       message: "🎟️ Someone registered for a live session!", 
       type: "info" 
     });
-  } catch (err) {}
+  } catch (_err) {
+    // Socket emit failed, ignore for now
+  }
 
   sendResponse(res, 201, "Registration successful", result);
 });
@@ -43,7 +45,9 @@ const createSession = catchAsyncHandler(async (req: Request, res: Response) => {
       message: "🎥 A new live session has been scheduled!", 
       type: "success" 
     });
-  } catch (err) {}
+  } catch (_err) {
+    // Socket emit failed, ignore for now
+  }
 
   sendResponse(res, 201, "Session created successfully", result);
 });

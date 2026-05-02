@@ -17,7 +17,9 @@ const createJob = catchAsyncHandler(async (req: Request, res: Response) => {
       message: "💼 A new job has been posted!", 
       type: "success" 
     });
-  } catch (err) {}
+  } catch (_err) {
+    // Socket emit failed, ignore for now
+  }
 
   sendResponse(res, 201, "Job created successfully", result);
 });
@@ -55,7 +57,9 @@ const applyForJob = catchAsyncHandler(async (req: Request, res: Response) => {
       message: "📝 Someone applied for a job!", 
       type: "info" 
     });
-  } catch (err) {}
+  } catch (_err) {
+    // Socket emit failed, ignore for now
+  }
 
   sendResponse(res, 201, "Application submitted successfully", result);
 });

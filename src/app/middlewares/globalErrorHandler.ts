@@ -1,22 +1,21 @@
 import { NextFunction, Request, Response } from "express";
 import { CustomAppError } from "../errors/customError";
 import { ZodError } from "zod";
-import { prisma } from "../../lib/prisma";
 import { Prisma } from "@prisma/client";
 import logger from "../../lib/logger";
 
 const globalErrorHandler = (
-  err: any,
+  err: unknown,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   let statusCode = 500;
   let message = "Something went wrong!";
   let errorSources: { path: string; message: string }[] = [
     {
       path: "",
-      message: err.message || "Internal Server Error",
+      message: (err as Error).message || "Internal Server Error",
     },
   ];
   logger.error("Global error handler caught an error:", err);

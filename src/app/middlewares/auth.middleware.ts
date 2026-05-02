@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../lib/prisma";
+import { IUser } from "../interfaces/user.interface";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
 
@@ -10,22 +11,22 @@ const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
  * If no token or invalid, it continues without populating req.user.
  */
 export const optionalProtect = async (req: Request, res: Response, next: NextFunction) => {
-  let token = req.headers.authorization?.split(" ")[1];
+  const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
     return next();
   }
 
   try {
-    const decoded: any = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
     const user = await prisma.user.findUnique({ where: { id: decoded.id } });
 
     if (user) {
-      const { password, ...safeUser } = user;
-      req.user = safeUser as any;
+      const { password: _password, ...safeUser } = user;
+      req.user = safeUser as unknown as IUser; 
     }
     next();
-  } catch (err) {
+  } catch (_err) {
     // If token is invalid, just proceed without user info
     next();
   }
@@ -39,7 +40,7 @@ export const optionalProtect = async (req: Request, res: Response, next: NextFun
  */
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
   // Extract token from the Authorization header (expected format: 'Bearer <token>')
-  let token = req.headers.authorization?.split(" ")[1]; 
+  const token = req.headers.authorization?.split(" ")[1]; 
 
   if (!token) {
     return res.status(401).json({ status: "fail", message: "Access denied: No authentication token provided" });
@@ -47,7 +48,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
   try {
     // 1. Verify the authenticity and expiration of the JWT
-    const decoded: any = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
 
     // 2. Fetch the corresponding user from PostgreSQL using Prisma
     const user = await prisma.user.findUnique({
@@ -59,11 +60,11 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
     }
 
     // 3. Attach standard user object to request for downstream access in controllers
-    const { password, ...safeUser } = user;
-    req.user = safeUser as any; 
+    const { password: _password, ...safeUser } = user;
+    req.user = safeUser as unknown as IUser; 
     
     next();
-  } catch (err) {
+  } catch (_err) {
     // Handle specific JWT errors like expiration or tampering
     return res.status(401).json({ status: "fail", message: "Authentication failed: Invalid or expired token" });
   }

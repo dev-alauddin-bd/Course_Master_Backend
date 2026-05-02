@@ -13,7 +13,7 @@ const storage = new CloudinaryStorage({
   params: {
     folder: "course_master_avatars",
     allowed_formats: ["jpg", "png", "jpeg", "webp"]
-  } as any
+  } as unknown as Record<string, unknown>
 });
 
 export const upload = multer({ storage: storage });

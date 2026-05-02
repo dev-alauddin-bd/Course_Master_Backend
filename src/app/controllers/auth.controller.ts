@@ -30,7 +30,9 @@ const signup = catchAsyncHandler(async (req: Request, res: Response) => {
       message: "🎉 A new user just joined the platform!", 
       type: "success" 
     });
-  } catch (err) {}
+  } catch (_err) {
+    // Socket emit failed, ignore for now
+  }
 
   sendResponse(res, 201, "User registered successfully", { user, accessToken });
 });

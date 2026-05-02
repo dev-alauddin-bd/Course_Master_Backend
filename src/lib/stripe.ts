@@ -1,5 +1,4 @@
-// @ts-ignore
-const Stripe = require('stripe');
+import Stripe from 'stripe';
 
 import logger from "./logger";
 
@@ -9,6 +8,6 @@ if (stripeSecret === 'sk_test_placeholder') {
   logger.warn("Stripe secret key is missing (STRIPE_SECRET_KEY). Payment functionality will not work properly.");
 }
 
-export const stripe = new Stripe(stripeSecret, {
-  apiVersion: '2025-02-24.acacia',
+export const stripe: InstanceType<typeof Stripe> = new Stripe(stripeSecret, {
+  apiVersion: '2023-10-16' as unknown as never,
 });

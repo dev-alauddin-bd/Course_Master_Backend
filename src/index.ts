@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
@@ -52,7 +52,7 @@ const limiter = rateLimit({
 // ==============================
 // CUSTOM RATE LIMIT WITH WHITELIST
 // ==============================
-const rateLimitWithWhitelist = (req: Request, res: Response, next: any) => {
+const rateLimitWithWhitelist = (req: Request, res: Response, next: NextFunction) => {
   const ip =
     (req.headers["x-forwarded-for"] as string)?.split(",")[0] ||
     req.socket.remoteAddress ||

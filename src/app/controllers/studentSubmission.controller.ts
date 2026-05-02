@@ -20,7 +20,9 @@ const submitAssignment = catchAsyncHandler(async (req: Request, res: Response) =
       message: "📝 An assignment has been submitted!", 
       type: "info" 
     });
-  } catch (err) {}
+  } catch (_err) {
+    // Socket emit failed, ignore for now
+  }
 
   sendResponse(res, 201, "Assignment submitted successfully", submission);
 });

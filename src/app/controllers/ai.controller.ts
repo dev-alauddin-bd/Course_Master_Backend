@@ -6,6 +6,7 @@ import { Request, RequestHandler, Response } from "express";
 import { AiService } from "../services/ai.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
+import logger from "../../lib/logger";
 
 // ============================== CHAT Assistant (SSE) ==============================
 const chatAssistant = async (req: Request, res: Response) => {
@@ -25,9 +26,10 @@ const chatAssistant = async (req: Request, res: Response) => {
 
     res.write(`data: [DONE]\n\n`);
     res.end();
-  } catch (error: any) {
-    console.error("Chat Controller Error:", error);
-    res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+  } catch (error) {
+    logger.error("Chat Controller Error:", error);
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    res.write(`data: ${JSON.stringify({ error: errorMessage })}\n\n`);
     res.end();
   }
 };

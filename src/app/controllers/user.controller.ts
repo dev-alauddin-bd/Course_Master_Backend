@@ -44,7 +44,7 @@ const updateProfile = catchAsyncHandler(async (req: Request, res: Response) => {
   let avatarUrl;
 
   if (req.file) {
-    avatarUrl = (req.file as any).path; 
+    avatarUrl = req.file.path; 
   }
 
   const updatedUser = await userService.updateProfile(userId, {
