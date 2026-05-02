@@ -6,6 +6,7 @@ import { Request, RequestHandler, Response } from "express";
 import { reviewService } from "../services/review.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
+import { getIO } from "../../lib/socket";
 
 // ============================== CREATE Review ==============================
 const createReview = catchAsyncHandler(async (req: Request, res: Response) => {
@@ -18,6 +19,13 @@ const createReview = catchAsyncHandler(async (req: Request, res: Response) => {
     userId,
     courseId,
   });
+
+  try {
+    getIO().emit("new_notification", { 
+      message: "⭐ A new review has been submitted!", 
+      type: "success" 
+    });
+  } catch (err) {}
 
   sendResponse(res, 201, "Review submitted successfully", result);
 });

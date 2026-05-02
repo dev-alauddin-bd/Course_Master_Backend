@@ -18,9 +18,12 @@ By integrating modern technologies like LangChain for AI features and Cloudinary
 |---|---|
 | 📚 **Complete Course CRUD** | Manage Categories, Courses, Modules, and Lessons with rich metadata, search, and pagination capabilities. |
 | 🔐 **Advanced Authentication** | Secure JWT-based authentication (access/refresh tokens) combined with Firebase integration for social logins. |
-| 👥 **Role-Based Access Control** | Strictly enforced guards for `student`, `instructor`, and `admin` roles to ensure data security. |
+| 👥 **Role-Based Access Control** | Strictly enforced guards for `student`, `instructor`, and `admin` roles, along with comprehensive User Management (block/unblock, role updates). |
 | ☁️ **Media Management** | Integrated with **Cloudinary** and **Multer** for reliable image and video uploads directly from the client or server. |
 | 🤖 **AI Orchestration (RAG)** | Context-aware AI Mentor, smart semantic search, and automated MCQ generation using **LangChain** and **OpenRouter**. |
+| 💼 **Jobs & Careers Management** | Complete CRUD operations for job postings, along with applicant tracking and resume submissions. |
+| 📹 **Live Sessions** | Specialized endpoints for instructors to schedule, manage, and register students for live classes. |
+| 📊 **Platform Analytics** | Aggregated analytics endpoints providing key metrics on user growth, revenue generation, and course enrollments. |
 | 💳 **Secure Payments** | **Stripe** integration for handling checkout sessions and webhooks for success, failure, and refund scenarios. |
 | 📊 **Progress Tracking** | Sophisticated enrollment tracking allowing students to follow linear progressions and complete lessons. |
 | 🛡️ **Data Validation** | Strict runtime validation of incoming requests and payloads using **Zod**. |
@@ -71,6 +74,21 @@ courseMaster-backend/
 - `POST /api/v1/auth/signup` - Register an account
 - `POST /api/v1/auth/login` - Authenticate and retrieve JWTs
 - `GET /api/v1/users/me` - Retrieve current user profile
+- `PATCH /api/v1/users/:id/role` - Update user role (Admin only)
+- `PATCH /api/v1/users/:id/status` - Block/unblock users (Admin only)
+
+### 💼 Jobs & Careers
+- `GET /api/v1/jobs` - List open job positions
+- `POST /api/v1/jobs` - Create a new job listing
+- `POST /api/v1/jobs/apply` - Submit a job application
+
+### 📹 Live Sessions
+- `POST /api/v1/live-sessions` - Schedule a new live session
+- `POST /api/v1/live-sessions/register` - Register for a session
+
+### 📊 Platform Analytics
+- `GET /api/v1/analytics/stats` - Fetch core platform metrics
+- `GET /api/v1/analytics/users` - Fetch user growth trends
 
 ### 💳 Payments & Enrollments
 - `POST /api/v1/enrollments` - Enroll in free or paid courses (triggers Stripe)

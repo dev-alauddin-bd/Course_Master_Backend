@@ -6,10 +6,19 @@ import { Request, RequestHandler, Response } from "express";
 import { jobService } from "../services/job.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
+import { getIO } from "../../lib/socket";
 
 // ============================== CREATE Job ==============================
 const createJob = catchAsyncHandler(async (req: Request, res: Response) => {
   const result = await jobService.createJob(req.body);
+  
+  try {
+    getIO().emit("new_notification", { 
+      message: "💼 A new job has been posted!", 
+      type: "success" 
+    });
+  } catch (err) {}
+
   sendResponse(res, 201, "Job created successfully", result);
 });
 
@@ -40,6 +49,14 @@ const deleteJob = catchAsyncHandler(async (req: Request, res: Response) => {
 // ============================== APPLY For Job ==============================
 const applyForJob = catchAsyncHandler(async (req: Request, res: Response) => {
   const result = await jobService.applyForJob(req.body);
+
+  try {
+    getIO().emit("new_notification", { 
+      message: "📝 Someone applied for a job!", 
+      type: "info" 
+    });
+  } catch (err) {}
+
   sendResponse(res, 201, "Application submitted successfully", result);
 });
 

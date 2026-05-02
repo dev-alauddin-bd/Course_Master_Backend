@@ -6,10 +6,19 @@ import { Request, RequestHandler, Response } from "express";
 import { liveSessionService } from "../services/liveSession.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
+import { getIO } from "../../lib/socket";
 
 // ============================== REGISTER For Session ==============================
 const registerForSession = catchAsyncHandler(async (req: Request, res: Response) => {
   const result = await liveSessionService.registerForSession(req.body);
+
+  try {
+    getIO().emit("new_notification", { 
+      message: "🎟️ Someone registered for a live session!", 
+      type: "info" 
+    });
+  } catch (err) {}
+
   sendResponse(res, 201, "Registration successful", result);
 });
 
@@ -28,6 +37,14 @@ const getSessionById = catchAsyncHandler(async (req: Request, res: Response) => 
 // ============================== CREATE Session ==============================
 const createSession = catchAsyncHandler(async (req: Request, res: Response) => {
   const result = await liveSessionService.createSession(req.body);
+
+  try {
+    getIO().emit("new_notification", { 
+      message: "🎥 A new live session has been scheduled!", 
+      type: "success" 
+    });
+  } catch (err) {}
+
   sendResponse(res, 201, "Session created successfully", result);
 });
 

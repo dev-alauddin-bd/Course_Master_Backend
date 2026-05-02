@@ -10,6 +10,7 @@ import { IUser, IUserLogin } from "../interfaces/user.interface";
 import { generateTokens } from "../utils/generateTokens";
 import { setRefreshTokenCookie } from "../utils/cookie";
 import { sendResponse } from "../utils/sendResponse";
+import { getIO } from "../../lib/socket";
 
 // ============================== SIGNUP ==============================
 const signup = catchAsyncHandler(async (req: Request, res: Response) => {
@@ -23,6 +24,13 @@ const signup = catchAsyncHandler(async (req: Request, res: Response) => {
   };
   const { accessToken, refreshToken } = generateTokens(payload);
   setRefreshTokenCookie(res, refreshToken);
+
+  try {
+    getIO().emit("new_notification", { 
+      message: "🎉 A new user just joined the platform!", 
+      type: "success" 
+    });
+  } catch (err) {}
 
   sendResponse(res, 201, "User registered successfully", { user, accessToken });
 });

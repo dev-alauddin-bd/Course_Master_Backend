@@ -7,12 +7,24 @@ import { courseService } from "../services/course.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
 import logger from "../../lib/logger";
+import { getIO } from "../../lib/socket";
 
 // ============================== CREATE Course ==============================
 const createCourse = catchAsyncHandler(async (req: Request, res: Response) => {
   logger.info("Received course creation request with data:", req.body);
   const instructorId = req.user!.id;
   const course = await courseService.createCourse({ ...req.body, instructorId });
+  
+  try {
+    // 🔥 Emit real-time notification to all connected clients
+    getIO().emit("new_notification", { 
+      message: `🎉 New Course Published: ${course.title || "Check it out!"}`, 
+      type: "success" 
+    });
+  } catch (err) {
+    logger.error("Failed to emit socket event:", err);
+  }
+
   sendResponse(res, 201, "Course created successfully", course);
 });
 

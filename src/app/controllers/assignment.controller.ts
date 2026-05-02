@@ -6,10 +6,19 @@ import { Request, RequestHandler, Response } from "express";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
 import { AssignmentService } from "../services/assignment.service";
+import { getIO } from "../../lib/socket";
 
 // ============================== CREATE Assignment ==============================
 const createAssignment = catchAsyncHandler(async (req: Request, res: Response) => {
   const assignment = await AssignmentService.createAssignment(req.body);
+
+  try {
+    getIO().emit("new_notification", { 
+      message: "📚 A new assignment has been posted!", 
+      type: "success" 
+    });
+  } catch (err) {}
+
   sendResponse(res, 201, "Assignment created successfully", assignment);
 });
 

@@ -7,11 +7,19 @@ import { newsletterService } from "../services/newsletter.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
 import { newsletterValidation } from "../validations/newsletter.validation";
+import { getIO } from "../../lib/socket";
 
 // ============================== SUBSCRIBE ==============================
 const subscribe = catchAsyncHandler(async (req: Request, res: Response) => {
   const validated = newsletterValidation.parse(req.body);
   const result = await newsletterService.subscribe(validated.email);
+  
+  // Emit socket event for real-time notifications
+  getIO().emit("new_notification", { 
+    message: "New user subscribed to the newsletter!", 
+    type: "info"
+  });
+
   sendResponse(res, 201, "Subscribed successfully", result);
 });
 

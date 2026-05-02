@@ -59,6 +59,14 @@ export const stripeWebhook = async (req: Request, res: Response) => {
         });
       });
       logger.info("✅ Payment and Enrollment processed successfully");
+      
+      try {
+        const { getIO } = require("../../lib/socket");
+        getIO().emit("new_notification", { 
+          message: "💰 A new payment and course enrollment just completed successfully!", 
+          type: "success" 
+        });
+      } catch (err) {}
     } catch (err) {
       logger.error("❌ Webhook Database Transaction Error:", err);
     }
