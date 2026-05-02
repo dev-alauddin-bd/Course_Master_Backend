@@ -315,3 +315,12 @@ model JobApplication {
   @@index([status])
   @@map("job_applications")
 }
+
+// ---------------- NEWSLETTER ----------------
+model NewsletterSubscriber {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("newsletter_subscribers")
+}

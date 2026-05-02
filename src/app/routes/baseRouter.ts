@@ -18,6 +18,7 @@ import { studentSubmissionRouter } from "./studentSubmission.route";
 import { aiRouter } from "./ai.route";
 import { liveSessionRoutes } from "./liveSession.route";
 import { jobRouter } from "./job.route";
+import { newsletterRouter } from "./newsletter.route";
 
 const router = Router();
 
@@ -34,6 +35,7 @@ const routes = [
   { path: "/ai", handler: aiRouter },
   { path: "/live-sessions", handler: liveSessionRoutes },
   { path: "/jobs", handler: jobRouter },
+  { path: "/newsletter", handler: newsletterRouter },
   { path: "/dashboard", handler: dashboardRouter },
   { path: "/users", handler: userRouter },
   { path: "/submissions", handler: studentSubmissionRouter },
