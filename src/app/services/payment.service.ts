@@ -37,8 +37,8 @@ export const paymentService = {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
-      success_url: `${process.env.FRONTEND_URL}/dashboard/student/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL}/dashboard/student/payment/cancel`,
+      success_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/v1/payments/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/v1/payments/cancel`,
       customer_email: user.email,
       client_reference_id: userId,
       metadata: { userId, courseId },
@@ -66,5 +66,53 @@ export const paymentService = {
     });
 
     return { paymentUrl: session.url };
+  },
+
+  // ============================== VERIFY Payment and ENROLL ==============================
+  async verifyPaymentAndEnroll(sessionId: string) {
+    try {
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+      if (session.payment_status === "paid") {
+        const userId = session.metadata?.userId;
+        const courseId = session.metadata?.courseId;
+
+        if (userId && courseId) {
+          await prisma.$transaction(async (tx) => {
+            // Update payment status
+            await tx.payment.update({
+              where: { stripeSessionId: sessionId },
+              data: {
+                status: "COMPLETED",
+                stripePaymentId: session.payment_intent as string,
+              },
+            });
+
+            // Create enrollment
+            await tx.enrollment.upsert({
+              where: { userId_courseId: { userId, courseId } },
+              create: { userId, courseId },
+              update: {},
+            });
+          });
+
+          try {
+            const { getIO } = require("../../lib/socket");
+            getIO().emit("new_notification", {
+              message: "💰 A new payment and course enrollment just completed successfully!",
+              type: "success"
+            });
+          } catch (_err) {
+            // Socket emit failed, ignore
+          }
+
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      logger.error("❌ Error verifying payment session manually:", error);
+      return false;
+    }
   },
 };

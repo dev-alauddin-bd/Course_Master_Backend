@@ -78,12 +78,13 @@ app.use(
 );
 
 app.use(cookieParser());
-app.use(express.json());
 
 // ==============================
 // WEBHOOK (before JSON heavy routes)
 // ==============================
 app.use("/webhook", webhookRouter);
+
+app.use(express.json());
 
 // ==============================
 // API ROUTES
