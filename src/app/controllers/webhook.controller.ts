@@ -83,8 +83,13 @@ export const stripeWebhook = async (req: Request, res: Response) => {
     event.type === "checkout.session.expired" ||
     event.type === "checkout.session.async_payment_failed"
   ) {
-    const session = event.data.object as any;
-    
+    interface StripeSession {
+      id: string;
+      payment_intent: string | null;
+      metadata: Record<string, string | undefined> | null;
+    }
+    const session = event.data.object as StripeSession;
+
     try {
       await prisma.payment.update({
         where: { stripeSessionId: session.id },

@@ -6,6 +6,7 @@ import { prisma } from "../../lib/prisma";
 import { stripe } from "../../lib/stripe";
 import { CustomAppError } from "../errors/customError";
 import logger from "../../lib/logger";
+import { getIO } from "../../lib/socket";
 
 export const paymentService = {
   // ============================== CREATE Checkout Session ==============================
@@ -37,8 +38,8 @@ export const paymentService = {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
-      success_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/v1/payments/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/v1/payments/cancel`,
+      success_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/payments/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/payments/cancel`,
       customer_email: user.email,
       client_reference_id: userId,
       metadata: { userId, courseId },
@@ -97,7 +98,6 @@ export const paymentService = {
           });
 
           try {
-            const { getIO } = require("../../lib/socket");
             getIO().emit("new_notification", {
               message: "💰 A new payment and course enrollment just completed successfully!",
               type: "success"
