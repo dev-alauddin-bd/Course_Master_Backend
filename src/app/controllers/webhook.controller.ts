@@ -79,6 +79,32 @@ export const stripeWebhook = async (req: Request, res: Response) => {
     } catch (err) {
       logger.error("❌ Webhook Database Transaction Error:", err);
     }
+  } else if (
+    event.type === "checkout.session.expired" ||
+    event.type === "checkout.session.async_payment_failed"
+  ) {
+    const session = event.data.object as any;
+    
+    try {
+      await prisma.payment.update({
+        where: { stripeSessionId: session.id },
+        data: {
+          status: "FAILED",
+        },
+      });
+      logger.info("❌ Payment failed or expired, updated status to FAILED");
+
+      try {
+        getIO().emit("new_notification", { 
+          message: "⚠️ A course payment failed or expired.", 
+          type: "error" 
+        });
+      } catch (_err) {
+        // ignore
+      }
+    } catch (err) {
+      logger.error("❌ Failed to update payment status for failed session:", err);
+    }
   }
 
   return res.status(200).json({ received: true });

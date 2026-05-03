@@ -37,8 +37,8 @@ export const paymentService = {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
-      success_url: `${process.env.FRONTEND_URL}/dashboard/student/my-courses?success=true`,
-      cancel_url: `${process.env.FRONTEND_URL}/courses/${course.id}?canceled=true`,
+      success_url: `${process.env.FRONTEND_URL}/dashboard/student/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL}/dashboard/student/payment/cancel`,
       customer_email: user.email,
       client_reference_id: userId,
       metadata: { userId, courseId },
