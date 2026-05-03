@@ -166,9 +166,10 @@ export const paymentService = {
       });
 
       return { message: "Refund processed successfully. Course enrollment cancelled." };
-    } catch (error: any) {
+    } catch (error) {
       logger.error("❌ Error processing refund:", error);
-      throw new CustomAppError(500, error.message || "Failed to process refund");
+      const errorMessage = error instanceof Error ? error.message : "Failed to process refund";
+      throw new CustomAppError(500, errorMessage);
     }
   },
 };
