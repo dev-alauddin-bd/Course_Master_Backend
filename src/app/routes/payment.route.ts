@@ -11,6 +11,9 @@ const router = Router();
 // ============================== CREATE Checkout ==============================
 router.post("/checkout", protect, paymentController.createCheckout);
 
+// ============================== REFUND Course ==============================
+router.post("/refund", protect, paymentController.refundCourse);
+
 // ============================== PAYMENT Callbacks ==============================
 router.get("/success", paymentController.paymentSuccess);
 router.get("/cancel", paymentController.paymentCancel);

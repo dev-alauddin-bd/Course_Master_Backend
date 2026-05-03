@@ -120,11 +120,22 @@ const paymentFail = (req: Request, res: Response) => {
   res.send(html);
 };
 
+const refundCourse = catchAsyncHandler(async (req: Request, res: Response) => {
+  const { courseId } = req.body;
+  const userId = req.user!.id;
+  if (!courseId) {
+    return sendResponse(res, 400, "courseId is required");
+  }
+  const result = await paymentService.refundCourse(userId, courseId);
+  sendResponse(res, 200, "Refund processed", result);
+});
+
 export const paymentController: PaymentController = {
   createCheckout,
   paymentSuccess,
   paymentCancel,
   paymentFail,
+  refundCourse,
 };
 
 type PaymentController = {
@@ -132,4 +143,5 @@ type PaymentController = {
   paymentSuccess: RequestHandler;
   paymentCancel: RequestHandler;
   paymentFail: RequestHandler;
+  refundCourse: RequestHandler;
 }

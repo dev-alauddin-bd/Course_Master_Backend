@@ -115,4 +115,60 @@ export const paymentService = {
       return false;
     }
   },
+
+  // ============================== REFUND Course ==============================
+  async refundCourse(userId: string, courseId: string) {
+    logger.info("🚀 Starting course refund process...", { userId, courseId });
+
+    const payment = await prisma.payment.findFirst({
+      where: {
+        userId,
+        courseId,
+        status: "COMPLETED",
+      },
+    });
+
+    if (!payment || !payment.stripePaymentId) {
+      throw new CustomAppError(400, "No completed payment found for this course to refund.");
+    }
+
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId, courseId } },
+    });
+
+    if (!enrollment) {
+      throw new CustomAppError(404, "You are not enrolled in this course.");
+    }
+
+    // Check 14-day refund policy
+    const daysSincePayment = (Date.now() - new Date(payment.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+    if (daysSincePayment > 14) {
+      throw new CustomAppError(400, "Refund period has expired. Refunds are only available within 14 days of purchase.");
+    }
+
+    try {
+      // Create a refund via Stripe
+      await stripe.refunds.create({
+        payment_intent: payment.stripePaymentId,
+      });
+
+      await prisma.$transaction(async (tx) => {
+        // Update payment status to REFUNDED
+        await tx.payment.update({
+          where: { id: payment.id },
+          data: { status: "REFUNDED" },
+        });
+
+        // Remove enrollment
+        await tx.enrollment.delete({
+          where: { userId_courseId: { userId, courseId } },
+        });
+      });
+
+      return { message: "Refund processed successfully. Course enrollment cancelled." };
+    } catch (error: any) {
+      logger.error("❌ Error processing refund:", error);
+      throw new CustomAppError(500, error.message || "Failed to process refund");
+    }
+  },
 };
