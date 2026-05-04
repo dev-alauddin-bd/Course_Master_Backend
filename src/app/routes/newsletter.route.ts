@@ -5,12 +5,14 @@
 import { Router } from "express";
 import { newsletterController } from "../controllers/newsletter.controller";
 import { protect, authorize } from "../middlewares/auth.middleware";
+import { validate } from "../middlewares/validate.middleware";
 import { UserRole } from "../interfaces/user.interface";
+import { newsletterValidation } from "../validations/newsletter.validation";
 
 const router = Router();
 
 // ============================== SUBSCRIBE ==============================
-router.post("/subscribe", newsletterController.subscribe);
+router.post("/subscribe", validate(newsletterValidation), newsletterController.subscribe);
 
 // ============================== ADMIN ROUTES ==============================
 router.get("/", protect, authorize(UserRole.ADMIN), newsletterController.getAllSubscribers);

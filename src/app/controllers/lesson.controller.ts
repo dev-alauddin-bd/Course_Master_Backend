@@ -6,22 +6,21 @@ import { Request, RequestHandler, Response } from "express";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { lessonService } from "../services/lesson.service";
 import { sendResponse } from "../utils/sendResponse";
-import { createLessonValidation, updateLessonValidation } from "../validations/lesson.validation";
 import logger from "../../lib/logger";
 
 // ============================== ADD Lesson ==============================
 const addLesson = catchAsyncHandler(async (req: Request, res: Response) => {
   logger.info("Received request to add lesson with body:", req.body);
-  const validated = createLessonValidation.parse(req.body);
-  const lesson = await lessonService.addLesson(validated);
+  // req.body already validated by validate(createLessonValidation) middleware
+  const lesson = await lessonService.addLesson(req.body);
   sendResponse(res, 201, "Lesson added successfully", lesson);
 });
 
 // ============================== UPDATE Lesson ==============================
 const updateLesson = catchAsyncHandler(async (req: Request, res: Response) => {
   const { lessonId } = req.params;
-  const validated = updateLessonValidation.parse(req.body);
-  const lesson = await lessonService.updateLesson(lessonId as string, validated);
+  // req.body already validated by validate(updateLessonValidation) middleware
+  const lesson = await lessonService.updateLesson(lessonId as string, req.body);
   sendResponse(res, 200, "Lesson updated successfully", lesson);
 });
 

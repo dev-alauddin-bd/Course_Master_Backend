@@ -5,7 +5,6 @@
 import { Request, RequestHandler, Response } from "express";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { authServices } from "../services/auth.service";
-import { loginValidation, signupValidation } from "../validations/auth.validation";
 import { IUser, IUserLogin } from "../interfaces/user.interface";
 import { generateTokens } from "../utils/generateTokens";
 import { setRefreshTokenCookie } from "../utils/cookie";
@@ -14,8 +13,8 @@ import { getIO } from "../../lib/socket";
 
 // ============================== SIGNUP ==============================
 const signup = catchAsyncHandler(async (req: Request, res: Response) => {
-  const validated = signupValidation.parse(req.body);
-  const user = await authServices.signup(validated as IUser);
+  // req.body is already validated & transformed by validate(signupValidation) middleware
+  const user = await authServices.signup(req.body as IUser);
 
   const payload: { id: string; email: string; role: string } = {
     id: user.id,
@@ -39,8 +38,8 @@ const signup = catchAsyncHandler(async (req: Request, res: Response) => {
 
 // ============================== LOGIN ==============================
 const login = catchAsyncHandler(async (req: Request, res: Response) => {
-  const validated = loginValidation.parse(req.body);
-  const user = await authServices.login(validated as IUserLogin);
+  // req.body is already validated by validate(loginValidation) middleware
+  const user = await authServices.login(req.body as IUserLogin);
 
   const payload: { id: string; email: string; role: string } = {
     id: user.id,

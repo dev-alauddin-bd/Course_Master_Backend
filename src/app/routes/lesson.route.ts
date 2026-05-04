@@ -5,12 +5,17 @@
 import { Router } from "express";
 import { lessonController } from "../controllers/lesson.controller";
 import { authorize, protect } from "../middlewares/auth.middleware";
+import { validate } from "../middlewares/validate.middleware";
 import { UserRole } from "../interfaces/user.interface";
+import {
+  createLessonValidation,
+  updateLessonValidation,
+} from "../validations/lesson.validation";
 
 const router = Router();
 
 // ============================== ADD Lesson (INSTRUCTOR) ==============================
-router.post("/", protect, authorize(UserRole.INSTRUCTOR), lessonController.addLesson);
+router.post("/", protect, authorize(UserRole.INSTRUCTOR), validate(createLessonValidation), lessonController.addLesson);
 
 // ============================== GET ALL Lessons ==============================
 router.get("/", protect, authorize(UserRole.INSTRUCTOR, UserRole.STUDENT), lessonController.getAllLessons);
@@ -20,12 +25,13 @@ router.get("/", protect, authorize(UserRole.INSTRUCTOR, UserRole.STUDENT), lesso
 // ==============================
 
 // ============================== GET Lesson By ID ==============================
-router.get("/:lessonId", protect, lessonController.getLessonById);
+router.get("/:lessonId", protect, authorize(UserRole.INSTRUCTOR, UserRole.STUDENT), lessonController.getLessonById);
 
 // ============================== UPDATE Lesson (INSTRUCTOR) ==============================
-router.patch("/:lessonId", protect, authorize(UserRole.INSTRUCTOR), lessonController.updateLesson);
+router.patch("/:lessonId", protect, authorize(UserRole.INSTRUCTOR), validate(updateLessonValidation), lessonController.updateLesson);
 
 // ============================== DELETE Lesson (INSTRUCTOR) ==============================
 router.delete("/:lessonId", protect, authorize(UserRole.INSTRUCTOR), lessonController.deleteLesson);
 
 export const lessonRouter: Router = router;
+

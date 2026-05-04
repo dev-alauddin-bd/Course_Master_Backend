@@ -6,14 +6,14 @@ import { Request, RequestHandler, Response } from "express";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
 import { enrollService } from "../services/enroll.service";
-import { enrollValidation } from "../validations/enroll.validation";
 import { getIO } from "../../lib/socket";
 
 // ============================== ENROLL In Course ==============================
 const enrollCourse = catchAsyncHandler(async (req: Request, res: Response) => {
-  const validated = enrollValidation.parse(req.body);
+  // req.body already validated by validate(enrollValidation) middleware
+  const { courseId } = req.body as { courseId: string };
   const userId = req.user!.id;
-  const enrollment = await enrollService.enrollCourse(userId, validated.courseId);
+  const enrollment = await enrollService.enrollCourse(userId, courseId);
   
   try {
     getIO().emit("new_notification", { 

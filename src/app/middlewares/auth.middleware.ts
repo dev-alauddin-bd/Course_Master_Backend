@@ -3,7 +3,13 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../../lib/prisma";
 import { IUser } from "../interfaces/user.interface";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
+// Fail fast if the secret is not configured — never fall back to a weak default.
+if (!process.env.JWT_SECRET) {
+  throw new Error(
+    "[Security] JWT_SECRET environment variable is not set. Refusing to start."
+  );
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
  * Optional authentication middleware: 

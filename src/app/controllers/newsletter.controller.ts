@@ -6,13 +6,13 @@ import { Request, RequestHandler, Response } from "express";
 import { newsletterService } from "../services/newsletter.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
-import { newsletterValidation } from "../validations/newsletter.validation";
 import { getIO } from "../../lib/socket";
 
 // ============================== SUBSCRIBE ==============================
 const subscribe = catchAsyncHandler(async (req: Request, res: Response) => {
-  const validated = newsletterValidation.parse(req.body);
-  const result = await newsletterService.subscribe(validated.email);
+  // req.body already validated by validate(newsletterValidation) middleware
+  const { email } = req.body as { email: string };
+  const result = await newsletterService.subscribe(email);
   
   // Emit socket event for real-time notifications
   getIO().emit("new_notification", { 

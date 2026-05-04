@@ -4,17 +4,23 @@
 
 import { Router } from "express";
 import { authControllers } from "../controllers/auth.controller";
+import { validate } from "../middlewares/validate.middleware";
+import {
+  signupValidation,
+  loginValidation,
+  syncFirebaseValidation,
+} from "../validations/auth.validation";
 
 const router = Router();
 
 // ============================== SIGNUP ==============================
-router.post("/signup", authControllers.signup);
+router.post("/signup", validate(signupValidation), authControllers.signup);
 
 // ============================== LOGIN ==============================
-router.post("/login", authControllers.login);
+router.post("/login", validate(loginValidation), authControllers.login);
 
 // ============================== SYNC Firebase ==============================
-router.post("/sync-firebase", authControllers.syncFirebase);
+router.post("/sync-firebase", validate(syncFirebaseValidation), authControllers.syncFirebase);
 
 // ============================== REFRESH Token ==============================
 router.get("/refresh-token", authControllers.refreshToken);

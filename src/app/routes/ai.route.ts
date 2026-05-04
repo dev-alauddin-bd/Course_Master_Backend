@@ -4,18 +4,20 @@
 
 import { Router } from "express";
 import { AiController } from "../controllers/ai.controller";
-import { protect } from "../middlewares/auth.middleware";
+import { protect, authorize } from "../middlewares/auth.middleware";
+import { UserRole } from "../interfaces/user.interface";
 
 const router = Router();
 
 // ============================== CHAT Assistant ==============================
-router.post("/chat", protect, AiController.chatAssistant);
+// Public — no auth required
+router.post("/chat", AiController.chatAssistant);
 
 // ==============================
 // DYNAMIC ROUTES (with :id param) - must come last
 // ==============================
 
 // ============================== GENERATE Quiz ==============================
-router.get("/generate-quiz/:lessonId", protect, AiController.generateQuiz);
+router.get("/generate-quiz/:lessonId", protect, authorize(UserRole.INSTRUCTOR, UserRole.STUDENT), AiController.generateQuiz);
 
 export const aiRouter: Router = router;

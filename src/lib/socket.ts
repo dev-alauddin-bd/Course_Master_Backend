@@ -2,52 +2,77 @@ import { Server, Socket } from "socket.io";
 import { Server as HttpServer } from "http";
 import logger from "./logger";
 
-// Create a global or module-level variable to store the Socket.IO instance.
-// This allows us to reuse the exact same instance across controllers/services.
+// Store Socket.IO instance
 let io: Server | null = null;
 
+/** Allowed roles */
+const ALLOWED_ROLES = new Set(["student", "instructor", "admin", "guest"]);
+
 /**
- * Initializes the Socket.IO server.
- * 
- * @param server - The native Node.js HTTP server (returned by app.listen)
- * @returns The initialized Socket.IO server instance
+ * Initialize Socket.IO
  */
 export const initSocket = (server: HttpServer): Server => {
+  const allowedOrigin =
+    process.env.FRONTEND_URL ??
+    (process.env.NODE_ENV !== "production"
+      ? "http://localhost:3000"
+      : undefined);
+
+  if (!allowedOrigin) {
+    throw new Error(
+      "[Security] FRONTEND_URL env var must be set in production for Socket.IO CORS."
+    );
+  }
+
   io = new Server(server, {
     cors: {
-      origin: "*", // In production, restrict this to your frontend URL
-      methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+      origin: allowedOrigin,
+      methods: ["GET", "POST"],
+      credentials: true,
     },
   });
 
   io.on("connection", (socket: Socket) => {
-    logger.info(`⚡ [Socket.IO] New client connected: ${socket.id}`);
+    const rawRole =
+      typeof socket.handshake.query.role === "string"
+        ? socket.handshake.query.role
+        : "guest";
 
-    // --- Developer Note ---
-    // Here you can listen to global events.
-    // However, it's often better to let your controllers handle specific logic
-    // and use `getIO()` to emit events from anywhere in your backend.
+    const role = ALLOWED_ROLES.has(rawRole) ? rawRole : "guest";
+
+    socket.join(`role-${role}`);
+
+    logger.info(
+      `⚡ [Socket.IO] Connected: ${socket.id} (role: ${role})`
+    );
 
     socket.on("disconnect", () => {
-      logger.info(`🔌 [Socket.IO] Client disconnected: ${socket.id}`);
+      logger.info(`🔌 [Socket.IO] Disconnected: ${socket.id}`);
     });
   });
 
-  logger.info("📡 Socket.IO server initialized successfully!");
+  logger.info("📡 Socket.IO initialized!");
   return io;
 };
 
 /**
- * Retrieves the initialized Socket.IO instance.
- * Throws an error if called before `initSocket()`.
- * 
- * @example
- * import { getIO } from "../lib/socket";
- * getIO().emit("new_notification", { message: "Hello!" });
+ * Get IO instance
  */
 export const getIO = (): Server => {
   if (!io) {
-    throw new Error("Socket.io not initialized! Call initSocket(server) first.");
+    throw new Error("Socket.io not initialized! Call initSocket first.");
   }
   return io;
+};
+
+/**
+ * Emit event to a specific role (Generic Type Safe)
+ */
+export const emitToRole = <T>(
+  role: string,
+  event: string,
+  data: T
+): void => {
+  const io = getIO();
+  io.to(`role-${role}`).emit(event, data);
 };
