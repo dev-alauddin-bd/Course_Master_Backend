@@ -7,7 +7,8 @@ import { Request, RequestHandler, Response } from "express";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
 import { AssignmentService } from "../services/assignment.service";
-import { getIO } from "../../lib/socket";
+import { notificationService } from "../services/notification.service";
+import { prisma } from "../../lib/prisma";
 
 // ============================== SUBMIT Assignment ==============================
 const submitAssignment = catchAsyncHandler(async (req: Request, res: Response) => {
@@ -16,10 +17,22 @@ const submitAssignment = catchAsyncHandler(async (req: Request, res: Response) =
   const submission = await AssignmentService.submitAssignment(assignmentId, userId, content);
 
   try {
-    getIO().emit("new_notification", { 
-      message: "📝 An assignment has been submitted!", 
-      type: "info" 
+    // 🔒 SECURITY FIX: Only notify admin and course instructor about submission
+    const assignment = await prisma.assignment.findUnique({
+      where: { id: assignmentId },
+      select: { module: { select: { course: { select: { instructorId: true } } } } }
     });
+
+    if (assignment?.module?.course) {
+      await notificationService.notifyAdminAndInstructor(
+        {
+          message: "📝 A student has submitted an assignment!",
+          type: "info",
+          data: { assignmentId, studentId: userId }
+        },
+        assignment.module.course.instructorId
+      );
+    }
   } catch (_err) {
     // Socket emit failed, ignore for now
   }

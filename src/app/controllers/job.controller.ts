@@ -6,16 +6,23 @@ import { Request, RequestHandler, Response } from "express";
 import { jobService } from "../services/job.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
-import { getIO } from "../../lib/socket";
+import { notificationService } from "../services/notification.service";
 
 // ============================== CREATE Job ==============================
 const createJob = catchAsyncHandler(async (req: Request, res: Response) => {
   const result = await jobService.createJob(req.body);
   
   try {
-    getIO().emit("new_notification", { 
-      message: "💼 A new job has been posted!", 
-      type: "success" 
+    // 🔒 SECURITY FIX: Only notify students and admin about new job posting
+    await notificationService.notifyRole("student", {
+      message: "💼 A new job has been posted!",
+      type: "success",
+      data: { jobId: result.id }
+    });
+    await notificationService.notifyAdmin({
+      message: "💼 A new job has been posted!",
+      type: "success",
+      data: { jobId: result.id }
     });
   } catch (_err) {
     // Socket emit failed, ignore for now
@@ -53,9 +60,11 @@ const applyForJob = catchAsyncHandler(async (req: Request, res: Response) => {
   const result = await jobService.applyForJob(req.body);
 
   try {
-    getIO().emit("new_notification", { 
-      message: "📝 Someone applied for a job!", 
-      type: "info" 
+    // 🔒 SECURITY FIX: Only notify admin about job applications
+    await notificationService.notifyAdmin({
+      message: "📝 Someone applied for a job!",
+      type: "info",
+      data: { jobId: req.body.jobId, applicantEmail: req.body.email }
     });
   } catch (_err) {
     // Socket emit failed, ignore for now

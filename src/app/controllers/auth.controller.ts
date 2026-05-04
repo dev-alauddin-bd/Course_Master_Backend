@@ -9,7 +9,7 @@ import { IUser, IUserLogin } from "../interfaces/user.interface";
 import { generateTokens } from "../utils/generateTokens";
 import { setRefreshTokenCookie } from "../utils/cookie";
 import { sendResponse } from "../utils/sendResponse";
-import { getIO } from "../../lib/socket";
+import { notificationService } from "../services/notification.service";
 
 // ============================== SIGNUP ==============================
 const signup = catchAsyncHandler(async (req: Request, res: Response) => {
@@ -25,9 +25,11 @@ const signup = catchAsyncHandler(async (req: Request, res: Response) => {
   setRefreshTokenCookie(res, refreshToken);
 
   try {
-    getIO().emit("new_notification", { 
-      message: "🎉 A new user just joined the platform!", 
-      type: "success" 
+    // 🔒 SECURITY FIX: Only notify admin about new user signup
+    await notificationService.notifyAdmin({
+      message: `🎉 A new user just joined the platform! (${user.email})`,
+      type: "success",
+      data: { userId: user.id, userEmail: user.email, userRole: user.role }
     });
   } catch (_err) {
     // Socket emit failed, ignore for now

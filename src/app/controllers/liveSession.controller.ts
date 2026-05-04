@@ -6,16 +6,18 @@ import { Request, RequestHandler, Response } from "express";
 import { liveSessionService } from "../services/liveSession.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
-import { getIO } from "../../lib/socket";
+import { notificationService } from "../services/notification.service";
 
 // ============================== REGISTER For Session ==============================
 const registerForSession = catchAsyncHandler(async (req: Request, res: Response) => {
   const result = await liveSessionService.registerForSession(req.body);
 
   try {
-    getIO().emit("new_notification", { 
-      message: "🎟️ Someone registered for a live session!", 
-      type: "info" 
+    // 🔒 SECURITY FIX: Only notify admin about session registration
+    await notificationService.notifyAdmin({
+      message: "🎟️ A student registered for a live session!",
+      type: "info",
+      data: { sessionId: req.body.sessionId, studentEmail: req.body.email }
     });
   } catch (_err) {
     // Socket emit failed, ignore for now
@@ -41,9 +43,16 @@ const createSession = catchAsyncHandler(async (req: Request, res: Response) => {
   const result = await liveSessionService.createSession(req.body);
 
   try {
-    getIO().emit("new_notification", { 
-      message: "🎥 A new live session has been scheduled!", 
-      type: "success" 
+    // 🔒 SECURITY FIX: Only notify students and admin about new session
+    await notificationService.notifyRole("student", {
+      message: "🎥 A new live session has been scheduled!",
+      type: "success",
+      data: { sessionId: result.id }
+    });
+    await notificationService.notifyAdmin({
+      message: "🎥 A new live session has been created!",
+      type: "success",
+      data: { sessionId: result.id, instructorId: req.user?.id }
     });
   } catch (_err) {
     // Socket emit failed, ignore for now

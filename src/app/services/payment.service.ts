@@ -6,7 +6,7 @@ import { prisma } from "../../lib/prisma";
 import { stripe } from "../../lib/stripe";
 import { CustomAppError } from "../errors/customError";
 import logger from "../../lib/logger";
-import { getIO } from "../../lib/socket";
+import { notificationService } from "./notification.service";
 
 export const paymentService = {
   // ============================== CREATE Checkout Session ==============================
@@ -79,6 +79,11 @@ export const paymentService = {
         const courseId = session.metadata?.courseId;
 
         if (userId && courseId) {
+          const course = await prisma.course.findUnique({
+            where: { id: courseId },
+            select: { title: true, instructorId: true }
+          });
+
           await prisma.$transaction(async (tx) => {
             // Update payment status
             await tx.payment.update({
@@ -98,10 +103,17 @@ export const paymentService = {
           });
 
           try {
-            getIO().emit("new_notification", {
-              message: "💰 A new payment and course enrollment just completed successfully!",
-              type: "success"
-            });
+            // 🔒 SECURITY FIX: Only notify admin and course instructor about payment
+            if (course) {
+              await notificationService.notifyAdminAndInstructor(
+                {
+                  message: `💰 New Payment Received: ${course.title}`,
+                  type: "success",
+                  data: { courseId, userId, amount: session.amount_total }
+                },
+                course.instructorId
+              );
+            }
           } catch (_err) {
             // Socket emit failed, ignore
           }
