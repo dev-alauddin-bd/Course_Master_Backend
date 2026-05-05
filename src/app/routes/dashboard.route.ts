@@ -10,6 +10,9 @@ import { UserRole } from "../interfaces/user.interface";
 const router = express.Router();
 
 // ============================== GET Analytics ==============================
-router.get("/analytics", protect, authorize(UserRole.ADMIN, UserRole.STUDENT, UserRole.INSTRUCTOR), dashboardController.getDashboardAnalytics);
+router.get("/admin-analytics", protect, authorize(UserRole.ADMIN), dashboardController.getAdminAnalytics);
+router.get("/instructor-analytics", protect, authorize(UserRole.INSTRUCTOR), dashboardController.getInstructorAnalytics);
+router.get("/student-analytics", protect, authorize(UserRole.STUDENT), dashboardController.getStudentAnalytics);
+
 
 export const dashboardRouter: Router = router;

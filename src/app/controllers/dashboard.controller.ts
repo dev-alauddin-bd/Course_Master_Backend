@@ -8,17 +8,34 @@ import { sendResponse } from "../utils/sendResponse";
 import { dashboardService } from "../services/dashboard.service";
 import { IUser } from "../interfaces/user.interface";
 
-// ============================== GET Analytics ==============================
-const getDashboardAnalytics = catchAsyncHandler(async (req: Request, res: Response) => {
+// ============================== GET Admin Analytics ==============================
+const getAdminAnalytics = catchAsyncHandler(async (req: Request, res: Response) => {
+  const analyticsData = await dashboardService.getAdminAnalytics();
+  sendResponse(res, 200, "Admin analytics successfully retrieved", analyticsData);
+});
+
+// ============================== GET Instructor Analytics ==============================
+const getInstructorAnalytics = catchAsyncHandler(async (req: Request, res: Response) => {
   const user = req.user as IUser;
-  const analyticsData = await dashboardService.getDashboardAnalytics(user);
-  sendResponse(res, 200, "Dashboard analytics successfully retrieved", analyticsData);
+  const analyticsData = await dashboardService.getInstructorAnalytics(user.id);
+  sendResponse(res, 200, "Instructor analytics successfully retrieved", analyticsData);
+});
+
+// ============================== GET Student Analytics ==============================
+const getStudentAnalytics = catchAsyncHandler(async (req: Request, res: Response) => {
+  const user = req.user as IUser;
+  const analyticsData = await dashboardService.getStudentAnalytics(user.id);
+  sendResponse(res, 200, "Student analytics successfully retrieved", analyticsData);
 });
 
 export const dashboardController: DashboardController = {
-  getDashboardAnalytics,
+  getAdminAnalytics,
+  getInstructorAnalytics,
+  getStudentAnalytics,
 };
 
 type DashboardController = {
-  getDashboardAnalytics: RequestHandler;
+  getAdminAnalytics: RequestHandler;
+  getInstructorAnalytics: RequestHandler;
+  getStudentAnalytics: RequestHandler;
 }
