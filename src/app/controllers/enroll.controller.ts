@@ -31,14 +31,24 @@ const getEnrolledCourseContent = catchAsyncHandler(async (req: Request, res: Res
   sendResponse(res, 200, "Course content fetched successfully", courseContent);
 });
 
+// ============================== CANCEL Enrollment / REFUND ==============================
+const cancelEnrollment = catchAsyncHandler(async (req: Request, res: Response) => {
+  const { courseId } = req.body as { courseId: string };
+  const userId = req.user!.id;
+  const result = await enrollService.cancelEnrollment(userId, courseId);
+  sendResponse(res, 200, "Enrollment cancelled successfully", result);
+});
+
 export const enrollController: EnrollController = {
   enrollCourse,
   getMyEnrollments,
   getEnrolledCourseContent,
+  cancelEnrollment
 };
 
 type EnrollController = {
   enrollCourse: RequestHandler;
   getMyEnrollments: RequestHandler;
   getEnrolledCourseContent: RequestHandler;
+  cancelEnrollment: RequestHandler;
 }

@@ -14,6 +14,8 @@ export interface ICourse {
   instructorId: string;
   instructor?: IUser;
   isPublished: boolean;
+  isFeatured: boolean;
+  featureRequested: boolean;
   categoryId: string;
 
 

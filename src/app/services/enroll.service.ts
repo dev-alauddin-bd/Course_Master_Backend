@@ -4,6 +4,7 @@
 
 import { prisma } from "../../lib/prisma";
 import { CustomAppError } from "../errors/customError";
+import { paymentService } from "./payment.service";
 
 // ============================== ENROLL In Course ==============================
 const enrollCourse = async (userId: string, courseId: string) => {
@@ -164,5 +165,28 @@ const getEnrolledCourseContent = async (userId: string, courseId: string) => {
 export const enrollService = {
   enrollCourse,
   getMyEnrollments,
-  getEnrolledCourseContent
+  getEnrolledCourseContent,
+  cancelEnrollment: async (userId: string, courseId: string) => {
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId, courseId } },
+      include: { course: true }
+    });
+
+    if (!enrollment) {
+      throw new CustomAppError(404, "Enrollment not found");
+    }
+
+    // If it's a paid course, we handle it through the payment service (refund)
+    if (enrollment.course.price > 0) {
+    
+      return await paymentService.refundCourse(userId, courseId);
+    }
+
+    // If it's a free course, just delete the enrollment
+    await prisma.enrollment.delete({
+      where: { userId_courseId: { userId, courseId } }
+    });
+
+    return { message: "Unenrolled from free course successfully" };
+  }
 };

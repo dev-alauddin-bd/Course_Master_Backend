@@ -11,6 +11,7 @@ const router = Router();
 
 // ============================== CREATE Checkout ==============================
 router.post("/checkout", protect, authorize(UserRole.STUDENT), paymentController.createCheckout);
+router.post("/checkout-featured", protect, authorize(UserRole.INSTRUCTOR), paymentController.createFeaturedCheckout);
 
 // ============================== REFUND Course ==============================
 router.post("/refund", protect, authorize(UserRole.STUDENT), paymentController.refundCourse);

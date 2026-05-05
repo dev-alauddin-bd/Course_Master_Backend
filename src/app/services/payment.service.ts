@@ -68,6 +68,58 @@ export const paymentService = {
     return { paymentUrl: session.url };
   },
 
+  // ============================== CREATE Featured Checkout Session ==============================
+  async createFeaturedCheckoutSession(userId: string, courseId: string) {
+    logger.info("🚀 Starting featured request checkout session...", { userId, courseId });
+
+    const course = await prisma.course.findUnique({ where: { id: courseId } });
+    if (!course) throw new CustomAppError(404, "Course not found");
+    
+    // Check if already featured or requested
+    if (course.isFeatured) throw new CustomAppError(400, "Course is already featured");
+    if (course.featureRequested) throw new CustomAppError(400, "Feature request is already pending");
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new CustomAppError(404, "User not found");
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      success_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/payments/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/payments/cancel`,
+      customer_email: user.email,
+      client_reference_id: userId,
+      metadata: { userId, courseId, type: "FEATURED_REQUEST" },
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: { 
+              name: `Featured Request: ${course.title}`,
+              description: "Promotion to home page featured section"
+            },
+            unit_amount: 5000, // Fixed price for featured request: $50.00
+          },
+          quantity: 1,
+        },
+      ],
+    });
+
+    await prisma.payment.create({
+      data: {
+        amount: 50,
+        currency: "usd",
+        status: "PENDING",
+        type: "FEATURED_REQUEST",
+        stripeSessionId: session.id,
+        userId,
+        courseId,
+      },
+    });
+
+    return { paymentUrl: session.url };
+  },
+
   // ============================== VERIFY Payment and ENROLL ==============================
   async verifyPaymentAndEnroll(sessionId: string) {
     try {
@@ -78,10 +130,7 @@ export const paymentService = {
         const courseId = session.metadata?.courseId;
 
         if (userId && courseId) {
-          await prisma.course.findUnique({
-            where: { id: courseId },
-            select: { title: true, instructorId: true }
-          });
+          const type = session.metadata?.type || "COURSE_PURCHASE";
 
           await prisma.$transaction(async (tx) => {
             // Update payment status
@@ -93,14 +142,21 @@ export const paymentService = {
               },
             });
 
-            // Create enrollment
-            await tx.enrollment.upsert({
-              where: { userId_courseId: { userId, courseId } },
-              create: { userId, courseId },
-              update: {},
-            });
+            if (type === "FEATURED_REQUEST") {
+              // Mark course as feature requested
+              await tx.course.update({
+                where: { id: courseId },
+                data: { featureRequested: true },
+              });
+            } else {
+              // Create enrollment (Standard course purchase)
+              await tx.enrollment.upsert({
+                where: { userId_courseId: { userId, courseId } },
+                create: { userId, courseId },
+                update: {},
+              });
+            }
           });
-
 
           return true;
         }

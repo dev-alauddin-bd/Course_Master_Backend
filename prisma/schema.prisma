@@ -25,6 +25,11 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum PaymentType {
+  COURSE_PURCHASE
+  FEATURED_REQUEST
+}
+
 // ---------------- USER ----------------
 model User {
   id                    String                 @id @default(uuid())
@@ -84,6 +89,8 @@ model Course {
   updatedAt DateTime @updatedAt
   reviews   Review[]
   isDeleted Boolean  @default(false)
+  isFeatured Boolean @default(false)
+  featureRequested Boolean @default(false)
 
   @@index([categoryId])
   @@index([instructorId])
@@ -204,6 +211,7 @@ model Payment {
   amount          Float
   currency        String        @default("usd")
   status          PaymentStatus @default(PENDING)
+  type            PaymentType   @default(COURSE_PURCHASE)
   stripeSessionId String?       @unique
   stripePaymentId String?       @unique
 

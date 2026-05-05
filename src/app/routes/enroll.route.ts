@@ -16,6 +16,7 @@ router.post("/", protect, authorize(UserRole.STUDENT), validate(enrollValidation
 
 // ============================== GET My Enrollments ==============================
 router.get("/me", protect, authorize(UserRole.STUDENT), enrollController.getMyEnrollments);
+router.post("/cancel", protect, authorize(UserRole.STUDENT), validate(enrollValidation), enrollController.cancelEnrollment);
 
 // ==============================
 // DYNAMIC ROUTES (with :id param) - must come last

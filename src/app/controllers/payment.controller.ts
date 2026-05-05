@@ -16,6 +16,14 @@ const createCheckout = catchAsyncHandler(async (req: Request, res: Response) => 
   sendResponse(res, 201, "Checkout session created", result);
 });
 
+// ============================== CREATE Featured Checkout ==============================
+const createFeaturedCheckout = catchAsyncHandler(async (req: Request, res: Response) => {
+  const { courseId } = req.body as { courseId: string };
+  const userId = req.user!.id;
+  const result = await paymentService.createFeaturedCheckoutSession(userId, courseId);
+  sendResponse(res, 201, "Featured request checkout session created", result);
+});
+
 const paymentSuccess = async (req: Request, res: Response) => {
   const sessionId = req.query.session_id as string;
   const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
@@ -132,6 +140,7 @@ const refundCourse = catchAsyncHandler(async (req: Request, res: Response) => {
 
 export const paymentController: PaymentController = {
   createCheckout,
+  createFeaturedCheckout,
   paymentSuccess,
   paymentCancel,
   paymentFail,
@@ -140,6 +149,7 @@ export const paymentController: PaymentController = {
 
 type PaymentController = {
   createCheckout: RequestHandler;
+  createFeaturedCheckout: RequestHandler;
   paymentSuccess: RequestHandler;
   paymentCancel: RequestHandler;
   paymentFail: RequestHandler;

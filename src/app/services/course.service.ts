@@ -78,11 +78,18 @@ const getAllCourses = async (query: Record<string, unknown>) => {
     where.categoryId = query.category as string;
   }
 
+  // Featured Filter
+  if (query.isFeatured === "true") {
+    where.isFeatured = true;
+  }
+
   // Sort Logic
   let orderBy: Record<string, unknown> = { createdAt: "desc" };
   if (query.sort) {
     if (query.sort === "newest") {
       orderBy = { createdAt: "desc" };
+    } else if (query.sort === "popular") {
+      orderBy = { enrolledUsers: { _count: "desc" } };
     } else {
       const [field, order] = (query.sort as string).split(":");
       const allowedFields = ["price", "createdAt", "title"];
@@ -381,6 +388,32 @@ const getRecommendations = async (userId: string) => {
   }
 };
 
+// ============================== REQUEST Feature ==============================
+const requestFeature = async (id: string, instructorId: string) => {
+  const course = await prisma.course.findUnique({ where: { id } });
+  if (!course) throw new CustomAppError(404, "Course not found");
+  if (course.instructorId !== instructorId) throw new CustomAppError(403, "You can only request features for your own courses");
+
+  return await prisma.course.update({
+    where: { id },
+    data: { featureRequested: true },
+  });
+};
+
+// ============================== APPROVE Feature ==============================
+const approveFeature = async (id: string, isFeatured: boolean) => {
+  const course = await prisma.course.findUnique({ where: { id } });
+  if (!course) throw new CustomAppError(404, "Course not found");
+
+  return await prisma.course.update({
+    where: { id },
+    data: { 
+      isFeatured,
+      featureRequested: false // Reset request status after admin action
+    },
+  });
+};
+
 export const courseService = {
   createCourse,
   getAllCourses,
@@ -390,5 +423,7 @@ export const courseService = {
   getMyCourses,
   completeLesson,
   togglePublish,
-  getRecommendations
+  getRecommendations,
+  requestFeature,
+  approveFeature
 };
