@@ -4,24 +4,21 @@ dotenv.config();
 import http from "http";
 import app from ".";
 import logger from "./lib/logger";
-import { initSocket } from "./lib/socket";
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 
 function startServer() {
   try {
-    // 🔥 1. CREATE HTTP SERVER (CRITICAL FIX)
+    // CREATE HTTP SERVER (CRITICAL FIX)
     const httpServer = http.createServer(app);
 
-    // 🔥 2. INIT SOCKET.IO
-    initSocket(httpServer);
-
-    // 🔥 3. START LISTEN
+ 
+    // START LISTEN
     httpServer.listen(PORT, "0.0.0.0", () => {
       logger.info(`🚀 Server running on port ${PORT}`);
     });
 
-    // 🔥 4. SAFETY HANDLERS
+    // SAFETY HANDLERS
     process.on("unhandledRejection", (err) => {
       logger.error("❌ Unhandled Rejection:", err);
     });

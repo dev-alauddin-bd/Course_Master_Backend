@@ -6,8 +6,6 @@ import { Request, RequestHandler, Response } from "express";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
 import { enrollService } from "../services/enroll.service";
-import { notificationService } from "../services/notification.service";
-import { prisma } from "../../lib/prisma";
 
 // ============================== ENROLL In Course ==============================
 const enrollCourse = catchAsyncHandler(async (req: Request, res: Response) => {
@@ -15,24 +13,6 @@ const enrollCourse = catchAsyncHandler(async (req: Request, res: Response) => {
   const { courseId } = req.body as { courseId: string };
   const userId = req.user!.id;
   const enrollment = await enrollService.enrollCourse(userId, courseId);
-  
-  // Get course details to notify instructor
-  const course = await prisma.course.findUnique({
-    where: { id: courseId },
-    select: { title: true, instructorId: true }
-  });
-
-  if (course) {
-    // 🔒 SECURITY FIX: Only notify admin and the course instructor
-    await notificationService.notifyAdminAndInstructor(
-      {
-        message: `📚 New Student Enrolled: ${course.title}`,
-        type: "success",
-        data: { courseId, studentId: userId }
-      },
-      course.instructorId
-    );
-  }
 
   sendResponse(res, 201, "Enrolled successfully", enrollment);
 });

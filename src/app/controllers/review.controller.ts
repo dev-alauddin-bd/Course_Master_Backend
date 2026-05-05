@@ -6,8 +6,7 @@ import { Request, RequestHandler, Response } from "express";
 import { reviewService } from "../services/review.service";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
-import { notificationService } from "../services/notification.service";
-import { prisma } from "../../lib/prisma";
+
 
 // ============================== CREATE Review ==============================
 const createReview = catchAsyncHandler(async (req: Request, res: Response) => {
@@ -21,26 +20,7 @@ const createReview = catchAsyncHandler(async (req: Request, res: Response) => {
     courseId,
   });
 
-  try {
-    // 🔒 SECURITY FIX: Only notify admin and course instructor about new review
-    const course = await prisma.course.findUnique({
-      where: { id: courseId },
-      select: { instructorId: true }
-    });
-
-    if (course) {
-      await notificationService.notifyAdminAndInstructor(
-        {
-          message: "⭐ A new review has been submitted!",
-          type: "success",
-          data: { courseId, reviewerId: userId, rating }
-        },
-        course.instructorId
-      );
-    }
-  } catch (_err) {
-    // Socket emit failed, ignore for now
-  }
+ 
 
   sendResponse(res, 201, "Review submitted successfully", result);
 });

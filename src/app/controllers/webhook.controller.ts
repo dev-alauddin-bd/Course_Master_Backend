@@ -6,7 +6,6 @@ import { Request, Response } from "express";
 import { stripe } from "../../lib/stripe";
 import { prisma } from "../../lib/prisma";
 import logger from "../../lib/logger";
-import { notificationService } from "../services/notification.service";
 
 
 // ============================== STRIPE Webhook ==============================
@@ -49,7 +48,7 @@ export const stripeWebhook = async (req: Request, res: Response) => {
     }
 
     try {
-      const course = await prisma.course.findUnique({
+       await prisma.course.findUnique({
         where: { id: courseId },
         select: { title: true, instructorId: true }
       });
@@ -73,21 +72,7 @@ export const stripeWebhook = async (req: Request, res: Response) => {
       });
       logger.info("✅ Payment and Enrollment processed successfully");
       
-      try {
-        // 🔒 SECURITY FIX: Only notify admin and course instructor
-        if (course) {
-          await notificationService.notifyAdminAndInstructor(
-            {
-              message: `💰 New Payment Received: ${course.title}`,
-              type: "success",
-              data: { courseId, userId, amount: session.id }
-            },
-            course.instructorId
-          );
-        }
-      } catch (_err) {
-        // Socket emit failed, ignore
-      }
+    
     } catch (err) {
       logger.error("❌ Webhook Database Transaction Error:", err);
     }
@@ -111,15 +96,7 @@ export const stripeWebhook = async (req: Request, res: Response) => {
       });
       logger.info("❌ Payment failed or expired, updated status to FAILED");
 
-      try {
-        // 🔒 SECURITY FIX: Only notify admin about failed payments
-        await notificationService.notifyAdmin({
-          message: "⚠️ A course payment failed or expired.",
-          type: "error"
-        });
-      } catch (_err) {
-        // ignore
-      }
+     
     } catch (err) {
       logger.error("❌ Failed to update payment status for failed session:", err);
     }

@@ -6,27 +6,11 @@ import { Request, RequestHandler, Response } from "express";
 import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { sendResponse } from "../utils/sendResponse";
 import { AssignmentService } from "../services/assignment.service";
-import { notificationService } from "../services/notification.service";
 
 // ============================== CREATE Assignment ==============================
 const createAssignment = catchAsyncHandler(async (req: Request, res: Response) => {
   const assignment = await AssignmentService.createAssignment(req.body);
 
-  try {
-    // 🔒 SECURITY FIX: Only notify students and admin about new assignment
-    await notificationService.notifyRole("student", {
-      message: "📚 A new assignment has been posted!",
-      type: "success",
-      data: { assignmentId: assignment.id }
-    });
-    await notificationService.notifyAdmin({
-      message: "📚 A new assignment has been created!",
-      type: "success",
-      data: { assignmentId: assignment.id }
-    });
-  } catch (_err) {
-    // Socket emit failed, ignore for now
-  }
 
   sendResponse(res, 201, "Assignment created successfully", assignment);
 });
