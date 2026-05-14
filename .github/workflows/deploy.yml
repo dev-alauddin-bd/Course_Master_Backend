@@ -26,15 +26,9 @@ jobs:
     needs: test-build # Prevents deployment if the build test fails
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Install Railway CLI
-        run: npm i -g @railway/cli # Installs the Railway tool to communicate with your hosting
-
-      - name: Deploy to Railway
-        # Ensure --service matches your Railway service name (e.g., Course_Master_Backend)
-        run: railway up --service Course_Master_Backend --detach
-        env:
-          # Authenticates the runner using your stored Railway Project Token
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: Deploy to Render
+        # This triggers a deployment on Render using a Deploy Hook.
+        # You need to add RENDER_DEPLOY_HOOK_URL to your GitHub Repository Secrets.
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          echo "Deployment Triggered on Render!"
