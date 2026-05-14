@@ -48,7 +48,7 @@ const getAllCourses = async (query: Record<string, unknown>) => {
   // Check cache first
   const cacheKey = `courses:${page}:${limit}:${query.search as string}:${query.category as string}:${query.sort as string}`;
   const cachedData = await redis.get(cacheKey);
-  
+
   if (cachedData) {
     return JSON.parse(cachedData);
   }
@@ -83,6 +83,13 @@ const getAllCourses = async (query: Record<string, unknown>) => {
     where.isFeatured = true;
   }
 
+  // Feature Requested Filter
+  if (query.featureRequested === "true") {
+    where.featureRequested = true;
+  }
+
+  // Sort Logic
+
   // Sort Logic
   let orderBy: Record<string, unknown> = { createdAt: "desc" };
   if (query.sort) {
@@ -93,7 +100,7 @@ const getAllCourses = async (query: Record<string, unknown>) => {
     } else {
       const [field, order] = (query.sort as string).split(":");
       const allowedFields = ["price", "createdAt", "title"];
-      if (allowedFields.includes(field)) {
+      if (allowedFields.includes(field) && order) {
         orderBy = { [field]: order === "desc" ? "desc" : "asc" };
       }
     }
@@ -296,7 +303,7 @@ const getMyCourses = async (userId: string, query: Record<string, unknown> = {})
                 lessons: {
                   select: {
                     id: true,
-                    completedByUsers: { 
+                    completedByUsers: {
                       where: { userId },
                       select: { id: true }
                     }
@@ -366,7 +373,7 @@ const getRecommendations = async (userId: string) => {
     });
 
     const categories = userEnrollments.map((e) => e.course.category?.name).filter(Boolean);
-    
+
     return await prisma.course.findMany({
       where: {
         category: { name: { in: categories as string[] } },
@@ -407,7 +414,7 @@ const approveFeature = async (id: string, isFeatured: boolean) => {
 
   return await prisma.course.update({
     where: { id },
-    data: { 
+    data: {
       isFeatured,
       featureRequested: false // Reset request status after admin action
     },

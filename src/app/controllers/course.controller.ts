@@ -51,12 +51,6 @@ const completeLesson = catchAsyncHandler(async (req: Request, res: Response) => 
   sendResponse(res, 200, "Progress tracked: Lesson marked as completed");
 });
 
-// ============================== GET Recommendations ==============================
-const getRecommendations = catchAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id;
-  const recommendations = await courseService.getRecommendations(userId as string);
-  sendResponse(res, 200, "Recommended courses fetched successfully", recommendations);
-});
 
 // ============================== UPDATE Course ==============================
 const updateCourse = catchAsyncHandler(async (req: Request, res: Response) => {
@@ -104,7 +98,6 @@ export const courseController: CourseController = {
   getMyCourses,
   completeLesson,
   togglePublish,
-  getRecommendations,
   requestFeature,
   approveFeature
 };
@@ -118,7 +111,6 @@ type CourseController = {
   getMyCourses: RequestHandler;
   completeLesson: RequestHandler;
   togglePublish: RequestHandler;
-  getRecommendations: RequestHandler;
   requestFeature: RequestHandler;
   approveFeature: RequestHandler;
 }

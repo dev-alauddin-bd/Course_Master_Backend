@@ -15,16 +15,16 @@ const getModel = () => {
   if (!process.env.OPENROUTER_API_KEY) {
     throw new CustomAppError(500, "OPENROUTER_API_KEY is not defined in environment variables");
   }
-  
+
   return new ChatOpenAI({
     apiKey: process.env.OPENROUTER_API_KEY,
-    modelName: "google/gemini-2.0-flash-001", 
+    modelName: "google/gemini-2.0-flash-001",
     temperature: 0.3,
     configuration: {
       baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {
-        "HTTP-Referer": "https://course-master-frontend-flax.vercel.app",
-        "X-Title": "CourseMaster LMS",
+        "HTTP-Referer": "https://mentoro-rho.vercel.app",
+        "X-Title": "Mentoro LMS",
       },
     },
   });
@@ -39,39 +39,39 @@ const chatAssistant = async (message: string, history: unknown[]) => {
     const cleanMessage = message.toLowerCase()
       .replace(/give|me|show|course|what|is|how|to|the|a|an/g, "")
       .trim();
-    
+
     const words = cleanMessage.split(/\s+/).filter(w => w.length > 2);
 
-    const searchFilter = words.length > 0 
+    const searchFilter = words.length > 0
       ? words.flatMap(word => [
-          { title: { contains: word, mode: 'insensitive' as const } },
-          { description: { contains: word, mode: 'insensitive' as const } },
-          { category: { name: { contains: word, mode: 'insensitive' as const } } }
-        ])
+        { title: { contains: word, mode: 'insensitive' as const } },
+        { description: { contains: word, mode: 'insensitive' as const } },
+        { category: { name: { contains: word, mode: 'insensitive' as const } } }
+      ])
       : [
-          { title: { contains: message, mode: 'insensitive' as const } },
-          { description: { contains: message, mode: 'insensitive' as const } }
-        ];
+        { title: { contains: message, mode: 'insensitive' as const } },
+        { description: { contains: message, mode: 'insensitive' as const } }
+      ];
 
     // 2. Fetch relevant context in parallel
     const [relevantCourses, relevantLessons] = await Promise.all([
       prisma.course.findMany({
         where: { OR: searchFilter },
         take: 3,
-        select: { 
-          title: true, 
+        select: {
+          title: true,
           description: true,
           thumbnail: true,
-          category: { select: { name: true } } 
+          category: { select: { name: true } }
         }
       }),
       prisma.lesson.findMany({
         where: {
-          OR: words.length > 0 
+          OR: words.length > 0
             ? words.flatMap(word => [
-                { title: { contains: word, mode: 'insensitive' as const } },
-                { content: { contains: word, mode: 'insensitive' as const } }
-              ])
+              { title: { contains: word, mode: 'insensitive' as const } },
+              { content: { contains: word, mode: 'insensitive' as const } }
+            ])
             : [{ title: { contains: message, mode: 'insensitive' as const } }]
         },
         take: 2,
@@ -98,7 +98,7 @@ const chatAssistant = async (message: string, history: unknown[]) => {
       AI Response:`);
 
     const chain = prompt.pipe(chatModel).pipe(new StringOutputParser());
-    
+
     return await chain.stream({
       message,
       history: JSON.stringify(history),
@@ -114,7 +114,7 @@ const chatAssistant = async (message: string, history: unknown[]) => {
 const generateQuiz = async (lessonId: string) => {
   try {
     const chatModel = getModel();
-    
+
     const lesson = await prisma.lesson.findUnique({
       where: { id: lessonId },
       select: {
@@ -152,7 +152,7 @@ const generateQuiz = async (lessonId: string) => {
     `);
 
     const chain = prompt.pipe(chatModel).pipe(new StringOutputParser());
-    
+
     const response = await chain.invoke({
       courseTitle,
       moduleTitle,
@@ -164,7 +164,7 @@ const generateQuiz = async (lessonId: string) => {
       response.indexOf("["),
       response.lastIndexOf("]") + 1
     );
-    
+
     return JSON.parse(cleanResponse);
   } catch (error) {
     logger.error("Quiz AI Error:", error);

@@ -27,8 +27,6 @@ router.get("/my-courses", protect, courseController.getMyCourses);
 // ============================== MARK Lesson Completed ==============================
 router.post("/complete-lesson", protect, validate(completeLessonValidation), courseController.completeLesson);
 
-// ============================== GET Recommendations ==============================
-router.get("/recommendations", protect, courseController.getRecommendations);
 
 // ==============================
 // DYNAMIC ROUTES (with :id param) - must come last

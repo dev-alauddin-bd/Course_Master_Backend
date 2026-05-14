@@ -1,12 +1,12 @@
-# 🚀 CourseMaster — Backend API
+# 🚀 Mentoro — Backend API
 
-> A robust, modular, and scalable RESTful API powering the CourseMaster Learning Management System (LMS). Built with **Express 5**, **Prisma 7**, **PostgreSQL**, and **Advanced AI Orchestration**.
+> A robust, modular, and scalable RESTful API powering the Mentoro Learning Management System (LMS). Built with **Express 5**, **Prisma 7**, **PostgreSQL**, and **Advanced AI Orchestration**.
 
 ---
 
 ## 📖 About The Project
 
-The CourseMaster Backend serves as the foundational engine for a full-featured online education platform. It provides a secure, efficient, and flexible architecture to handle everything from user authentication and role management to complex course structures, progress tracking, and secure financial transactions. 
+The Mentoro Backend serves as the foundational engine for a full‑featured online education platform. It provides a secure, efficient, and flexible architecture to handle everything from user authentication and role management to complex **Mentoro** structures, progress tracking, and secure financial transactions.
 
 By integrating modern technologies like LangChain for AI features and Cloudinary for media management, the backend ensures an optimized and intelligent experience for both students seeking knowledge and instructors building their audiences.
 
@@ -16,27 +16,25 @@ By integrating modern technologies like LangChain for AI features and Cloudinary
 
 | Feature | Description |
 |---|---|
-| 📚 **Complete Course CRUD** | Manage Categories, Courses, Modules, and Lessons with rich metadata, search, and pagination capabilities. |
-| 🔐 **Advanced Authentication** | Secure JWT-based authentication (access/refresh tokens) combined with Firebase integration for social logins. |
-| 👥 **Role-Based Access Control** | Strictly enforced guards for `student`, `instructor`, and `admin` roles, along with comprehensive User Management (block/unblock, role updates). |
+| 📚 **Complete Mentoro CRUD** | Manage Categories, **Mentoro**, Modules, and Lessons with rich metadata, search, and pagination capabilities. |
+| 🔐 **Advanced Authentication** | Secure JWT‑based authentication (access/refresh tokens) combined with Firebase integration for social logins. |
+| 👥 **Role‑Based Access Control** | Strictly enforced guards for `student`, `instructor`, and `admin` roles, along with comprehensive User Management (block/unblock, role updates). |
 | ☁️ **Media Management** | Integrated with **Cloudinary** and **Multer** for reliable image and video uploads directly from the client or server. |
-| 🤖 **AI Orchestration (RAG)** | Context-aware AI Mentor, smart semantic search, and automated MCQ generation using **LangChain** and **OpenRouter**. |
+| 🤖 **AI Orchestration (RAG)** | Context‑aware AI Mentor, smart semantic search, and automated MCQ generation using **LangChain** and **OpenRouter**. |
 | 💼 **Jobs & Careers Management** | Complete CRUD operations for job postings, along with applicant tracking and resume submissions. |
 | 📹 **Live Sessions** | Specialized endpoints for instructors to schedule, manage, and register students for live classes. |
-| 📊 **Platform Analytics** | Aggregated analytics endpoints providing key metrics on user growth, revenue generation, and course enrollments. |
+| 📊 **Platform Analytics** | Aggregated analytics endpoints providing key metrics on user growth, revenue generation, and **Mentoro** enrollments. |
 | 💳 **Secure Payments** | **Stripe** integration for handling checkout sessions and webhooks for success, failure, and refund scenarios. |
 | 📊 **Progress Tracking** | Sophisticated enrollment tracking allowing students to follow linear progressions and complete lessons. |
 | 🛡️ **Data Validation** | Strict runtime validation of incoming requests and payloads using **Zod**. |
-| 🚀 **Performance Optimized** | Rate limiting, Redis caching (optional), and optimized Prisma queries for fast response times. |
+| 🚀 **Performance Optimized** | Rate limiting, Redis caching (optional), and optimized Prisma queries for fast response times.
 
 ---
 
 ## 📁 Project Architecture
 
-The application follows a clean, modular architecture:
-
-```
-courseMaster-backend/
+```plaintext
+mentoro-backend/
 ├── prisma/
 │   └── schema.prisma            # Database schema mapping (15+ core models)
 ├── src/
@@ -46,7 +44,7 @@ courseMaster-backend/
 │   │   ├── prisma.ts            # Prisma client singleton instance
 │   │   └── stripe.ts            # Stripe SDK integration
 │   └── app/
-│       ├── controllers/         # Request handling for Auth, Courses, AI, Users
+│       ├── controllers/         # Request handling for Auth, Mentoro, AI, Users
 │       ├── services/            # Core business logic, DB queries, LangChain flows
 │       ├── routes/              # Modular API route definitions
 │       ├── middlewares/         # Auth verification, Role guards, Error handling
@@ -58,15 +56,15 @@ courseMaster-backend/
 
 ## 🔌 Core API Endpoints
 
-### 📚 Course Management
-- `GET /api/v1/courses` - Fetch catalog with search, filters, and pagination
-- `POST /api/v1/courses` - Create a new course (Instructor/Admin)
-- `GET /api/v1/courses/:id` - Get comprehensive course details
-- `PUT /api/v1/courses/:id` - Update course information
-- `DELETE /api/v1/courses/:id` - Remove a course
+### 📚 Mentoro Management
+- `GET /api/v1/mentoro` - Fetch catalog with search, filters, and pagination
+- `POST /api/v1/mentoro` - Create a new **Mentoro** (Instructor/Admin)
+- `GET /api/v1/mentoro/:id` - Get comprehensive **Mentoro** details
+- `PUT /api/v1/mentoro/:id` - Update **Mentoro** information
+- `DELETE /api/v1/mentoro/:id` - Remove a **Mentoro`
 
 ### 🤖 AI Integration
-- `POST /api/v1/ai/chat` - Interact with the context-aware AI Mentor
+- `POST /api/v1/ai/chat` - Interact with the context‑aware AI Mentor
 - `GET /api/v1/ai/generate-quiz/:lessonId` - Dynamically generate a quiz
 - `GET /api/v1/ai/search` - Perform semantic search across the platform
 
@@ -91,7 +89,7 @@ courseMaster-backend/
 - `GET /api/v1/analytics/users` - Fetch user growth trends
 
 ### 💳 Payments & Enrollments
-- `POST /api/v1/enrollments` - Enroll in free or paid courses (triggers Stripe)
+- `POST /api/v1/enrollments` - Enroll in free or paid **Mentoro**s (triggers Stripe)
 - `POST /api/webhook` - Stripe webhook listener
 
 ---
@@ -100,8 +98,8 @@ courseMaster-backend/
 
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/dev-alauddin-bd/Course_Master_Backend.git
-cd Course_Master_Backend
+git clone https://github.com/dev-alauddin-bd/Mentoro_Backend.git
+cd Mentoro_Backend
 npm install
 ```
 
@@ -138,12 +136,12 @@ npm run dev
 | Technology | Purpose |
 |-----------|---------|
 | **Express 5** | Robust, fast, and minimal HTTP web framework |
-| **Prisma 7** | Next-generation Node.js and TypeScript ORM |
-| **PostgreSQL** | Powerful, open source object-relational database system |
+| **Prisma 7** | Next‑generation Node.js and TypeScript ORM |
+| **PostgreSQL** | Powerful, open source object‑relational database system |
 | **LangChain & OpenRouter** | Framework for developing applications powered by language models |
-| **Cloudinary** | Cloud-based image and video management |
+| **Cloudinary** | Cloud‑based image and video management |
 | **Stripe** | Payment processing infrastructure |
-| **Zod** | TypeScript-first schema declaration and validation |
+| **Zod** | TypeScript‑first schema declaration and validation |
 | **TypeScript 5.9** | Static typing for enhanced developer experience and code quality |
 
 ---

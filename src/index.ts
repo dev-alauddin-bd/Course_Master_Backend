@@ -161,7 +161,7 @@ app.use("/api", baseRouter);
 app.get("/", (req: Request, res: Response) => {
   res.json({
     success: true,
-    message: "CourseMaster API v3 🚀",
+    message: "Mentoro API v3 🚀",
   });
 });
 
