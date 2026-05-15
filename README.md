@@ -104,18 +104,34 @@ npm install
 ```
 
 ### 2. Environment Variables
-Create a `.env` file in the root directory:
+Create a `.env` file in the root directory and configure the following variables:
+
 ```env
-DATABASE_URL="postgresql://user:password@host:5432/dbname"
-JWT_SECRET="your-jwt-secret-key"
-JWT_EXPIRES_IN="1d"
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
-OPENROUTER_API_KEY="your_openrouter_api_key"
-CLOUDINARY_CLOUD_NAME="your_cloud_name"
-CLOUDINARY_API_KEY="your_api_key"
-CLOUDINARY_API_SECRET="your_api_secret"
+# Database (Prisma)
+DATABASE_URL=postgres://user:password@host:port/database?sslmode=verify-full
+
+# Auth Configuration
+JWT_SECRET=your_jwt_access_secret
+JWT_REFRESH_SECRET=your_jwt_refresh_secret
+JWT_EXPIRES_IN=1d
+REFRESH_TOKEN_EXPIRES_IN=7d
+
+# Server Configuration
 PORT=5000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:3000
+BACKEND_URL=http://localhost:5000
+
+# AI & LLM (OpenRouter)
+OPENROUTER_API_KEY=your_openrouter_api_key
+
+# Payments (Stripe)
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Third-party Integrations
+GOOGLE_API_KEY=your_google_api_key
+REDIS_URL=rediss://...
 ```
 
 ### 3. Database Setup

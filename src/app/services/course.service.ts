@@ -9,6 +9,19 @@ import redis from "../../lib/redis";
 import logger from "../../lib/logger";
 import { Prisma } from "@prisma/client";
 
+// ============================== HELPER: Clear Course Cache ==============================
+const clearCourseCache = async () => {
+  try {
+    const keys = await redis.keys("courses:*");
+    if (keys.length > 0) {
+      await redis.del(...keys);
+      logger.info(`🧹 Cleared ${keys.length} course cache keys`);
+    }
+  } catch (error) {
+    logger.error("❌ Error clearing course cache:", error);
+  }
+};
+
 // ============================== CREATE Course ==============================
 const createCourse = async (payload: ICourse) => {
   try {
@@ -22,7 +35,7 @@ const createCourse = async (payload: ICourse) => {
       thumbnail,
     } = payload;
 
-    return await prisma.course.create({
+    const result = await prisma.course.create({
       data: {
         title,
         description,
@@ -33,6 +46,10 @@ const createCourse = async (payload: ICourse) => {
         thumbnail,
       },
     });
+
+    await clearCourseCache();
+    return result;
+
   } catch (error) {
     logger.error("❌ Error creating course:", error);
     throw new CustomAppError(500, "Course creation failed");
@@ -134,10 +151,12 @@ const getAllCourses = async (query: Record<string, unknown>) => {
     totalPages: Math.ceil(total / limit),
   };
 
-  // Cache result
-  await redis.setex(cacheKey, 300, JSON.stringify(result));
+  // Cache result (Wait for cache to be set before returning)
+  redis.setex(cacheKey, 300, JSON.stringify(result)).catch(err => logger.error("Redis Cache Error:", err));
+  
   return result;
 };
+
 
 // ============================== GET Course By ID ==============================
 const getCourseById = async (id: string, userId?: string) => {
@@ -207,7 +226,7 @@ const updateCourse = async (id: string, payload: Partial<ICourse>) => {
     throw new CustomAppError(404, "Unable to update: Course not found");
   }
 
-  return await prisma.course.update({
+  const result = await prisma.course.update({
     where: { id },
     data: payload as unknown as Prisma.CourseUpdateInput,
     select: {
@@ -220,6 +239,10 @@ const updateCourse = async (id: string, payload: Partial<ICourse>) => {
       category: { select: { id: true, name: true } }
     }
   });
+
+  await clearCourseCache();
+  return result;
+
 };
 
 // ============================== TOGGLE Publish Status ==============================
@@ -234,8 +257,9 @@ const togglePublish = async (id: string) => {
     data: { isPublished: !existing.isPublished },
   });
 
-  await redis.del(`courses:${id}`);
+  await clearCourseCache();
   return result;
+
 };
 
 // ============================== DELETE Course ==============================
@@ -246,7 +270,7 @@ const deleteCourse = async (id: string) => {
   }
 
   await prisma.course.delete({ where: { id } });
-  await redis.del(`courses:${id}`);
+  await clearCourseCache();
   return { message: "Course has been successfully deleted from the server" };
 };
 
@@ -401,10 +425,14 @@ const requestFeature = async (id: string, instructorId: string) => {
   if (!course) throw new CustomAppError(404, "Course not found");
   if (course.instructorId !== instructorId) throw new CustomAppError(403, "You can only request features for your own courses");
 
-  return await prisma.course.update({
+  const result = await prisma.course.update({
     where: { id },
     data: { featureRequested: true },
   });
+
+  await clearCourseCache();
+  return result;
+
 };
 
 // ============================== APPROVE Feature ==============================
@@ -412,13 +440,17 @@ const approveFeature = async (id: string, isFeatured: boolean) => {
   const course = await prisma.course.findUnique({ where: { id } });
   if (!course) throw new CustomAppError(404, "Course not found");
 
-  return await prisma.course.update({
+  const result = await prisma.course.update({
     where: { id },
     data: {
       isFeatured,
       featureRequested: false // Reset request status after admin action
     },
   });
+
+  await clearCourseCache();
+  return result;
+
 };
 
 export const courseService = {

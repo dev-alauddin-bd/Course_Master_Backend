@@ -25,4 +25,10 @@ router.post("/sync-firebase", validate(syncFirebaseValidation), authControllers.
 // ============================== REFRESH Token ==============================
 router.get("/refresh-token", authControllers.refreshToken);
 
+// ============================== VERIFY Session ==============================
+router.get("/verify-session", authControllers.verifySession);
+
+// ============================== LOGOUT ==============================
+router.post("/logout", authControllers.logout);
+
 export const authRouter: Router = router;

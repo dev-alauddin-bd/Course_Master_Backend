@@ -109,10 +109,14 @@ const syncFirebase = async (payload: { email: string; name: string; avatar?: str
         avatar: payload.avatar,
       },
     });
-  } else if (payload.avatar && !user.avatar) {
+  } else {
+    // ALWAYS update if provided
     user = await prisma.user.update({
       where: { id: user.id },
-      data: { avatar: payload.avatar },
+      data: { 
+        name: payload.name || user.name,
+        avatar: payload.avatar || user.avatar,
+      },
     });
   }
 
@@ -120,9 +124,36 @@ const syncFirebase = async (payload: { email: string; name: string; avatar?: str
   return userWithoutPassword;
 };
 
+// ============================== VERIFY Session ==============================
+const verifySession = async (token: string) => {
+  if (!token) {
+    throw new CustomAppError(401, "No refresh token provided");
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as {
+      id: string;
+    };
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+    });
+
+    if (!user || user.status === "blocked") {
+      throw new CustomAppError(403, "User not found or blocked");
+    }
+
+    const { password: _password, ...safeUser } = user;
+    return safeUser;
+  } catch (_error) {
+    throw new CustomAppError(401, "Invalid or expired session");
+  }
+};
+
 export const authServices = {
   signup,
   login,
   refreshToken,
+  verifySession,
   syncFirebase
 };

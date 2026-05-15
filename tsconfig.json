@@ -3,13 +3,11 @@
   "compilerOptions": {
     // File Layout
     "rootDir": "./src",
-
     "outDir": "./dist",
     "module": "CommonJS",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-
     "target": "esnext",
     "types": [
       "node"
@@ -26,8 +24,6 @@
   "include": [
     "src/**/*.ts"
   ],
-
-
   "exclude": [
     "node_modules",
     "dist"

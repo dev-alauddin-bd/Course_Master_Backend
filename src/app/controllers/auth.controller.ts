@@ -7,7 +7,7 @@ import { catchAsyncHandler } from "../utils/catchAsyncHandler";
 import { authServices } from "../services/auth.service";
 import { IUser, IUserLogin } from "../interfaces/user.interface";
 import { generateTokens } from "../utils/generateTokens";
-import { setRefreshTokenCookie } from "../utils/cookie";
+import { setRefreshTokenCookie, clearRefreshTokenCookie } from "../utils/cookie";
 import { sendResponse } from "../utils/sendResponse";
 
 // ============================== SIGNUP ==============================
@@ -52,11 +52,7 @@ const refreshToken = catchAsyncHandler(async (req: Request, res: Response) => {
 
 // ============================== LOGOUT ==============================
 const logout = catchAsyncHandler(async (req: Request, res: Response) => {
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-  });
+  clearRefreshTokenCookie(res);
   sendResponse(res, 200, "Logged out successfully");
 });
 
@@ -75,11 +71,19 @@ const syncFirebase = catchAsyncHandler(async (req: Request, res: Response) => {
   sendResponse(res, 200, "Firebase user synced successfully", { user, accessToken });
 });
 
+// ============================== VERIFY Session ==============================
+const verifySession = catchAsyncHandler(async (req: Request, res: Response) => {
+  const token = req.cookies.refreshToken;
+  const user = await authServices.verifySession(token);
+  sendResponse(res, 200, "Session verified", user);
+});
+
 export const authControllers: AuthControllers = {
   signup,
   login,
   refreshToken,
   logout,
+  verifySession,
   syncFirebase,
 };
 
@@ -88,5 +92,6 @@ type AuthControllers = {
   login: RequestHandler;
   refreshToken: RequestHandler;
   logout: RequestHandler;
+  verifySession: RequestHandler;
   syncFirebase: RequestHandler;
 };
