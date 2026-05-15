@@ -19,6 +19,7 @@ import { aiRouter } from "./ai.route";
 import { liveSessionRoutes } from "./liveSession.route";
 import { jobRouter } from "./job.route";
 import { newsletterRouter } from "./newsletter.route";
+import { legalRouter } from "./legal.route";
 
 const router = Router();
 
@@ -40,6 +41,7 @@ const routes = [
   { path: "/users", handler: userRouter },
   { path: "/submissions", handler: studentSubmissionRouter },
   { path: "/payments", handler: paymentRouter },
+  { path: "/legal", handler: legalRouter },
 ];
 
 // ============================== ATTACH Routers ==============================

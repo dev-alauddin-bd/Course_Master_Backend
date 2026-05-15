@@ -13,6 +13,7 @@ const enrollCourse = catchAsyncHandler(async (req: Request, res: Response) => {
   const { courseId } = req.body as { courseId: string };
   const userId = req.user!.id;
   const enrollment = await enrollService.enrollCourse(userId, courseId);
+  console.log("enrollment", enrollment);
 
   sendResponse(res, 201, "Enrolled successfully", enrollment);
 });

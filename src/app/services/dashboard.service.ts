@@ -8,17 +8,18 @@ import {  UserRole } from "../interfaces/user.interface";
 export const dashboardService = {
   // ============================== GET Admin Analytics ==============================
   async getAdminAnalytics() {
-    const [totalStudents, totalInstructors, totalCourses, coursesData, totalEnrollments] = await Promise.all([
+    const [totalStudents, totalInstructors, totalCourses, totalEnrollments, revenueData] = await Promise.all([
       prisma.user.count({ where: { role: UserRole.STUDENT } }),
       prisma.user.count({ where: { role: UserRole.INSTRUCTOR } }),
       prisma.course.count(),
-      prisma.course.findMany({
-        select: { price: true, _count: { select: { enrolledUsers: true } } }
-      }),
-      prisma.enrollment.count()
+      prisma.enrollment.count(),
+      prisma.payment.aggregate({
+        where: { status: 'COMPLETED' },
+        _sum: { amount: true }
+      })
     ]);
 
-    const totalRevenue = coursesData.reduce((sum, course) => sum + (course.price * (course._count?.enrolledUsers || 0)), 0);
+    const totalRevenue = revenueData._sum.amount || 0;
     const engagementRate = totalStudents > 0 
       ? Math.min(Math.round((totalEnrollments / totalStudents) * 100), 100)
       : 0;
@@ -39,24 +40,23 @@ export const dashboardService = {
 
   // ============================== GET Instructor Analytics ==============================
   async getInstructorAnalytics(userId: string) {
-    const [myCourses, myCoursesCount, totalLessons, totalEnrolledData] = await Promise.all([
-      prisma.course.findMany({
-        where: { instructorId: userId },
-        select: { 
-          id: true, 
-          price: true, 
-          _count: { select: { enrolledUsers: true } } 
-        }
-      }),
+    const [myCoursesCount, totalLessons, totalEnrolledData, uniqueStudents, instructorRevenueData] = await Promise.all([
       prisma.course.count({ where: { instructorId: userId } }),
       prisma.lesson.count({ where: { module: { course: { instructorId: userId } } } }),
-      prisma.enrollment.count({ where: { course: { instructorId: userId } } })
+      prisma.enrollment.count({ where: { course: { instructorId: userId } } }),
+      prisma.user.count({
+        where: { enrolledCourses: { some: { course: { instructorId: userId } } } }
+      }),
+      prisma.payment.aggregate({
+        where: { 
+          status: 'COMPLETED',
+          course: { instructorId: userId }
+        },
+        _sum: { amount: true }
+      })
     ]);
 
-    const myRevenue = myCourses.reduce((sum, course) => sum + (course.price * (course._count?.enrolledUsers || 0)), 0);
-    const uniqueStudents = await prisma.user.count({
-      where: { enrolledCourses: { some: { course: { instructorId: userId } } } }
-    });
+    const myRevenue = instructorRevenueData._sum.amount || 0;
     const engagementRate = uniqueStudents > 0 
       ? Math.min(Math.round((totalEnrolledData / uniqueStudents) * 100), 100)
       : 0;

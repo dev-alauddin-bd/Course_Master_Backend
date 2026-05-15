@@ -2,9 +2,11 @@
 //      Job Service
 // ====================
 
-import { prisma } from "../../lib/prisma";
 import { Prisma } from "@prisma/client";
+
 import { CustomAppError } from "../errors/customError";
+import { prisma } from "../../lib/prisma";
+
 
 // ============================== CREATE Job ==============================
 const createJob = async (data: Record<string, unknown>) => {
